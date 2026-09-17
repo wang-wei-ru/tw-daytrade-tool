@@ -1,0 +1,2251 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>當沖雷達 v0.5</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "PingFang TC",
+<!--     "Noto Sans TC",
+ -->    sans-serif;
+  background: #f5f6f8;
+  color: #222;
+}
+
+header {
+  background: #111827;
+  color: white;
+  padding: 18px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 20px;
+}
+
+header p {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: #cbd5e1;
+}
+
+.container {
+  padding: 12px;
+  max-width: 720px;
+  margin: auto;
+}
+
+.section {
+  margin-bottom: 14px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 14px 2px 8px;
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+
+.stock-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.stock-name {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.price {
+  font-size: 15px;
+  color: #555;
+}
+
+.signal {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.buy {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.sell {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.wait {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.blocked {
+  background: #e5e7eb;
+  color: #4b5563;
+}
+
+.score {
+  font-size: 24px;
+  font-weight: 800;
+  margin: 8px 0;
+}
+
+.score small {
+  font-size: 12px;
+  font-weight: 400;
+  color: #777;
+}
+
+.factor-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.factor {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 8px;
+  font-size: 12px;
+}
+
+.factor strong {
+  display: block;
+  font-size: 15px;
+  margin-top: 2px;
+}
+
+.eligibility {
+  margin-top: 10px;
+  padding: 9px;
+  background: #f8fafc;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+button {
+  border: none;
+  border-radius: 11px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(.98);
+}
+
+.btn-primary {
+  background: #111827;
+  color: white;
+}
+
+.btn-green {
+  background: #16a34a;
+  color: white;
+}
+
+.btn-red {
+  background: #dc2626;
+  color: white;
+}
+
+.btn-gray {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.btn-disabled {
+  background: #d1d5db;
+  color: #6b7280;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 11px;
+}
+
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.tab {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.tab.active {
+  background: #111827;
+  color: white;
+}
+
+.search {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+.status-bar {
+  background: #eef2ff;
+  color: #3730a3;
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 12px;
+  margin-bottom: 12px;
+  line-height: 1.7;
+}
+
+.live-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: #16a34a;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.update-time {
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 5px;
+}
+
+.locked {
+  background: #f3f4f6;
+  color: #6b7280;
+  padding: 9px;
+  border-radius: 10px;
+  margin-top: 9px;
+  font-size: 12px;
+}
+
+.empty {
+  text-align: center;
+  padding: 25px 10px;
+  color: #777;
+  background: white;
+  border-radius: 15px;
+}
+
+.trade-record {
+  border-left: 4px solid #16a34a;
+  background: #f9fafb;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+details {
+  background: white;
+  border-radius: 15px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+
+summary {
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.notice {
+  font-size: 11px;
+  color: #777;
+  line-height: 1.6;
+  margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>📈 當沖雷達 v0.5</h1>
+  <p>測試版｜模擬行情｜Tracking 高頻更新測試</p>
+</header>
+
+<div class="container">
+
+  <div class="tabs">
+
+    <button id="tabRadar"
+            class="tab active"
+            onclick="showTab('radar')">
+      📡 Radar
+    </button>
+
+    <button id="tabIndividual"
+            class="tab"
+            onclick="showTab('individual')">
+      🎯 個股
+    </button>
+
+    <button id="tabTracking"
+            class="tab"
+            onclick="showTab('tracking')">
+      👁️ Tracking
+    </button>
+
+  </div>
+
+  <div id="app"></div>
+
+</div>
+
+<script>
+
+/* =========================================================
+   測試股票資料
+   ========================================================= */
+
+let stocks = [
+
+  {
+    code: "2330",
+    name: "台積電",
+    type: "stock",
+    price: 1125,
+
+    buyEligible: true,
+    sellEligible: true,
+
+    buyScore: 91,
+    sellScore: 58,
+
+    factors: {
+      trend: 92,
+      volume: 94,
+      price: 90,
+      momentum: 88,
+      risk: 78
+    }
+  },
+
+  {
+    code: "2454",
+    name: "聯發科",
+    type: "stock",
+    price: 1450,
+
+    buyEligible: true,
+    sellEligible: true,
+
+    buyScore: 87,
+    sellScore: 61,
+
+    factors: {
+      trend: 89,
+      volume: 86,
+      price: 88,
+      momentum: 91,
+      risk: 72
+    }
+  },
+
+  {
+    code: "2317",
+    name: "鴻海",
+    type: "stock",
+    price: 215,
+
+    buyEligible: true,
+    sellEligible: true,
+
+    buyScore: 76,
+    sellScore: 74,
+
+    factors: {
+      trend: 79,
+      volume: 72,
+      price: 77,
+      momentum: 75,
+      risk: 68
+    }
+  },
+
+  {
+    code: "2303",
+    name: "聯電",
+    type: "stock",
+    price: 52.5,
+
+    buyEligible: true,
+    sellEligible: true,
+
+    buyScore: 88,
+    sellScore: 63,
+
+    factors: {
+      trend: 90,
+      volume: 91,
+      price: 86,
+      momentum: 89,
+      risk: 70
+    }
+  },
+
+  {
+    code: "2603",
+    name: "長榮",
+    type: "stock",
+    price: 178,
+
+    buyEligible: true,
+    sellEligible: true,
+
+    buyScore: 63,
+    sellScore: 89,
+
+    factors: {
+      trend: 84,
+      volume: 88,
+      price: 82,
+      momentum: 79,
+      risk: 65
+    }
+  },
+
+  /* 測試：只能先買後賣 */
+
+  {
+    code: "3001",
+    name: "測試A股",
+    type: "stock",
+    price: 125,
+
+    buyEligible: true,
+    sellEligible: false,
+
+    buyScore: 90,
+    sellScore: 95,
+
+    factors: {
+      trend: 90,
+      volume: 88,
+      price: 91,
+      momentum: 89,
+      risk: 72
+    }
+  },
+
+  /* 測試：只能先賣後買 */
+
+  {
+    code: "3002",
+    name: "測試B股",
+    type: "stock",
+    price: 165,
+
+    buyEligible: false,
+    sellEligible: true,
+
+    buyScore: 92,
+    sellScore: 89,
+
+    factors: {
+      trend: 87,
+      volume: 90,
+      price: 84,
+      momentum: 88,
+      risk: 66
+    }
+  },
+
+  /* ETF 測試 */
+
+  {
+    code: "0050",
+    name: "元大台灣50",
+    type: "ETF",
+    price: 188,
+
+    buyEligible: true,
+    sellEligible: true,
+
+    buyScore: 96,
+    sellScore: 55,
+
+    factors: {
+      trend: 96,
+      volume: 96,
+      price: 95,
+      momentum: 94,
+      risk: 90
+    }
+  }
+
+];
+
+
+/* =========================================================
+   狀態
+   ========================================================= */
+
+let currentTab = "radar";
+
+let trackingStocks = [];
+
+let completedTrades = [];
+
+let selectedStock = null;
+
+
+/* =========================================================
+   更新時間
+   ========================================================= */
+
+let lastTrackingUpdate = "--:--:--";
+
+
+/* =========================================================
+   計算方向
+   ========================================================= */
+
+function getDirection(stock) {
+
+  /* ETF：
+     可以查看，但不能進入 Radar / Tracking */
+
+  if (stock.type === "ETF") {
+
+    return {
+      type: "blocked",
+      text: "🚫 ETF 排除",
+      score: 0
+    };
+
+  }
+
+  let buyOK =
+    stock.buyEligible &&
+    stock.buyScore >= 85 &&
+    stock.buyScore - stock.sellScore >= 8;
+
+  let sellOK =
+    stock.sellEligible &&
+    stock.sellScore >= 85 &&
+    stock.sellScore - stock.buyScore >= 8;
+
+  if (buyOK) {
+
+    return {
+      type: "buy",
+      text: "🟢 沖買",
+      score: stock.buyScore
+    };
+
+  }
+
+  if (sellOK) {
+
+    return {
+      type: "sell",
+      text: "🔴 沖賣",
+      score: stock.sellScore
+    };
+
+  }
+
+  return {
+    type: "wait",
+    text: "🟡 觀望",
+    score: Math.max(
+      stock.buyScore,
+      stock.sellScore
+    )
+  };
+
+}
+
+
+/* =========================================================
+   個股卡片
+   ========================================================= */
+
+function stockCard(stock, mode = "radar") {
+
+  let direction = getDirection(stock);
+
+  let scoreText =
+    direction.type === "blocked"
+      ? "—"
+      : direction.score;
+
+  let eligibility = "";
+
+  if (stock.type === "ETF") {
+
+    eligibility = `
+      <div class="eligibility">
+        🚫 此版本 ETF 可以查看分析，
+        但不納入 Radar 與 Tracking。
+      </div>
+    `;
+
+  } else {
+
+    eligibility = `
+      <div class="eligibility">
+
+        <b>當沖資格</b><br>
+
+        ${
+          stock.buyEligible
+          ? "🟢 先買後賣：可"
+          : "🔒 先買後賣：不可"
+        }
+
+        <br>
+
+        ${
+          stock.sellEligible
+          ? "🔴 先賣後買：可"
+          : "🔒 先賣後買：不可"
+        }
+
+      </div>
+    `;
+
+  }
+
+
+  /* =======================================================
+     按鈕
+     ======================================================= */
+
+  let buttons = "";
+
+  let alreadyTracking =
+    trackingStocks.some(
+      x => x.code === stock.code
+    );
+
+
+  /*
+    Radar 模式
+  */
+
+  if (mode === "radar") {
+
+    if (alreadyTracking) {
+
+      buttons = `
+        <button class="btn-disabled" disabled>
+          👁️ 已在追蹤
+        </button>
+      `;
+
+    } else if (trackingStocks.length >= 2) {
+
+      buttons = `
+        <button class="btn-disabled" disabled>
+          🔒 已達 2 筆上限
+        </button>
+      `;
+
+    } else if (direction.type === "blocked") {
+
+      buttons = `
+        <button class="btn-disabled" disabled>
+          🚫 不納入
+        </button>
+      `;
+
+    } else {
+
+      buttons = `
+        <button
+          class="btn-primary"
+          onclick="startTracking('${stock.code}')">
+
+          👁️ 加入追蹤
+
+        </button>
+      `;
+
+    }
+
+  }
+
+
+  /*
+    Individual 模式
+    ★ 這裡是 v0.5 新增的核心功能
+  */
+
+  if (mode === "individual") {
+
+    if (stock.type === "ETF") {
+
+      buttons = `
+        <button
+          class="btn-disabled"
+          disabled>
+
+          🚫 ETF 不納入追蹤
+
+        </button>
+      `;
+
+    } else if (alreadyTracking) {
+
+      buttons = `
+        <button
+          class="btn-disabled"
+          disabled>
+
+          👁️ 已在追蹤
+
+        </button>
+      `;
+
+    } else if (trackingStocks.length >= 2) {
+
+      buttons = `
+        <button
+          class="btn-disabled"
+          disabled>
+
+          🔒 已達 2 筆上限
+
+        </button>
+      `;
+
+    } else {
+
+      /*
+        注意：
+        觀望也可以加入 Tracking。
+
+        Tracking ≠ 進場
+      */
+
+      buttons = `
+        <button
+          class="btn-primary"
+          onclick="startTracking('${stock.code}')">
+
+          👁️ 加入追蹤
+
+        </button>
+      `;
+
+    }
+
+  }
+
+
+  return `
+
+    <div class="card">
+
+      <div class="stock-head">
+
+        <div>
+
+          <div class="stock-name">
+            ${stock.code} ${stock.name}
+          </div>
+
+          <div class="price">
+            ${stock.price}
+          </div>
+
+        </div>
+
+        <div class="signal ${direction.type}">
+          ${direction.text}
+        </div>
+
+      </div>
+
+
+      <div class="score">
+
+        ${scoreText}
+
+        <small>
+          方向分數
+        </small>
+
+      </div>
+
+
+      <div class="factor-grid">
+
+        <div class="factor">
+          趨勢
+          <strong>
+            ${stock.factors.trend}
+          </strong>
+        </div>
+
+        <div class="factor">
+          量能
+          <strong>
+            ${stock.factors.volume}
+          </strong>
+        </div>
+
+        <div class="factor">
+          價格
+          <strong>
+            ${stock.factors.price}
+          </strong>
+        </div>
+
+        <div class="factor">
+          動能
+          <strong>
+            ${stock.factors.momentum}
+          </strong>
+        </div>
+
+        <div class="factor">
+          風險
+          <strong>
+            ${stock.factors.risk}
+          </strong>
+        </div>
+
+      </div>
+
+
+      ${eligibility}
+
+
+      <div class="actions">
+
+        ${buttons}
+
+        ${
+          mode === "radar"
+          ?
+          `
+            <button
+              class="btn-gray"
+              onclick="openIndividual('${stock.code}')">
+
+              🎯 查看個股
+
+            </button>
+          `
+          :
+          ""
+        }
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================================================
+   Radar
+   ========================================================= */
+
+function renderRadar() {
+
+  let sorted = [...stocks]
+
+    .filter(
+      stock => stock.type !== "ETF"
+    )
+
+    .sort(
+      (a, b) =>
+        getDirection(b).score -
+        getDirection(a).score
+    );
+
+
+  let html = `
+
+    <div class="status-bar">
+
+      📡 Radar 運作中
+
+      <br>
+
+      目前追蹤：
+      ${trackingStocks.length} / 2
+
+      <br>
+
+      ⏱️ Radar 測試行情：
+      每 60 秒更新一次
+
+    </div>
+
+
+    <input
+      class="search"
+      id="searchInput"
+      placeholder="🔎 輸入股票代號，例如 2330"
+      oninput="searchStock()"
+    >
+
+
+    <div id="radarList">
+
+      ${
+        sorted
+          .map(
+            stock =>
+              stockCard(stock, "radar")
+          )
+          .join("")
+      }
+
+    </div>
+
+  `;
+
+
+  document.getElementById(
+    "app"
+  ).innerHTML = html;
+
+}
+
+
+/* =========================================================
+   Radar 搜尋
+   ========================================================= */
+
+function searchStock() {
+
+  let input =
+    document.getElementById(
+      "searchInput"
+    );
+
+  if (!input) return;
+
+  let keyword =
+    input.value.trim();
+
+
+  let filtered =
+    stocks.filter(
+      stock =>
+        stock.code.includes(keyword) ||
+        stock.name.includes(keyword)
+    );
+
+
+  document.getElementById(
+    "radarList"
+  ).innerHTML =
+
+    filtered.length
+
+    ?
+
+    filtered
+      .map(
+        stock =>
+          stockCard(stock, "radar")
+      )
+      .join("")
+
+    :
+
+    `
+      <div class="empty">
+        找不到這支股票 😅
+      </div>
+    `;
+
+}
+
+
+/* =========================================================
+   個股模式
+   ========================================================= */
+
+function openIndividual(code) {
+
+  selectedStock =
+    stocks.find(
+      x => x.code === code
+    );
+
+  currentTab = "individual";
+
+  updateTabs();
+
+  renderIndividual();
+
+}
+
+
+function renderIndividual() {
+
+  if (!selectedStock) {
+
+    document.getElementById(
+      "app"
+    ).innerHTML = `
+
+      <div class="empty">
+
+        請先從 Radar 選擇股票
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  document.getElementById(
+    "app"
+  ).innerHTML = `
+
+    <div class="section-title">
+      🎯 個股分析
+    </div>
+
+
+    ${stockCard(
+      selectedStock,
+      "individual"
+    )}
+
+
+    <div class="card">
+
+      <b>
+        方向判斷邏輯
+      </b>
+
+      <div class="notice">
+
+        ① 先檢查是否具有該方向的當沖資格<br>
+
+        ② 方向分數需 ≥ 85<br>
+
+        ③ 買賣方向需有至少 8 分差距<br>
+
+        ④ 資格不符時，即使分數很高也不會放行<br>
+
+        ⑤ 加入 Tracking 不代表立即進場
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================================================
+   Tracking
+   ========================================================= */
+
+function renderTracking() {
+
+  let html = `
+
+    <div class="status-bar">
+
+      <span class="live-dot"></span>
+      🎯 Tracking 監控中
+
+      <br>
+
+      目前追蹤：
+      ${trackingStocks.length} / 2
+
+      <br>
+
+      ${
+        trackingStocks.length > 0
+        ? `
+          🔄 高頻測試更新：每 5 秒
+        `
+        : `
+          等待加入追蹤
+        `
+      }
+
+      <div class="update-time">
+
+        最後更新：
+        ${lastTrackingUpdate}
+
+      </div>
+
+    </div>
+
+  `;
+
+
+  if (
+    trackingStocks.length === 0
+  ) {
+
+    html += `
+
+      <div class="empty">
+
+        目前沒有追蹤中的股票 👀
+
+        <br><br>
+
+        可以從 Radar 或個股分析加入。
+
+      </div>
+
+    `;
+
+  } else {
+
+    trackingStocks.forEach(
+      stock => {
+
+        html +=
+          renderTrackingCard(stock);
+
+      }
+    );
+
+  }
+
+
+  html += `
+
+    <div class="section-title">
+      📋 今日已完成
+    </div>
+
+
+    <details>
+
+      <summary>
+
+        查看今日交易紀錄
+        （${completedTrades.length} 筆）
+
+      </summary>
+
+
+      <div style="margin-top:12px;">
+
+        ${
+          completedTrades.length === 0
+
+          ?
+
+          `
+            <div class="empty">
+
+              今天還沒有完成的交易。
+
+            </div>
+          `
+
+          :
+
+          completedTrades
+
+            .map(
+              trade => `
+
+                <div class="trade-record">
+
+                  <b>
+                    ${trade.code}
+                    ${trade.name}
+                  </b>
+
+                  <br>
+
+                  ${trade.direction}
+
+                  <br>
+
+                  第一筆進場：
+                  ${trade.firstEntryTime}
+
+                  <br>
+
+                  第二筆：
+                  ${
+                    trade.secondEntryTime ||
+                    "未進場"
+                  }
+
+                  <br>
+
+                  退出：
+                  ${trade.exitTime}
+
+                  <br>
+
+                  狀態：
+                  ✅ 已結束
+
+                </div>
+
+              `
+            )
+            .join("")
+
+        }
+
+      </div>
+
+    </details>
+
+
+    <div class="notice">
+
+      📌 今日紀錄只負責「記錄」，
+      不顯示退出後股價繼續上漲多少，
+      避免交易結束後一直回頭看造成留戀 😂
+
+    </div>
+
+  `;
+
+
+  document.getElementById(
+    "app"
+  ).innerHTML = html;
+
+}
+
+
+/* =========================================================
+   Tracking 卡片
+   ========================================================= */
+
+function renderTrackingCard(stock) {
+
+  let direction =
+    getDirection(stock);
+
+  let firstEntry =
+    stock.firstEntry === true;
+
+  let secondEntry =
+    stock.secondEntry === true;
+
+
+  let html = `
+
+    <div class="card">
+
+      <div class="stock-head">
+
+        <div>
+
+          <div class="stock-name">
+            ${stock.code}
+            ${stock.name}
+          </div>
+
+          <div class="price">
+
+            模擬價格：
+            ${stock.price}
+
+          </div>
+
+        </div>
+
+
+        <div class="signal ${direction.type}">
+
+          ${direction.text}
+
+        </div>
+
+      </div>
+
+
+      <div class="score">
+
+        ${direction.score}
+
+        <small>
+          目前分數
+        </small>
+
+      </div>
+
+
+      ${
+        !firstEntry
+
+        ?
+
+        `
+
+          <div class="eligibility">
+
+            第一筆：
+            ⏳ 尚未進場
+
+          </div>
+
+
+          <div class="actions">
+
+            <button
+
+              class="${
+                direction.type === "buy"
+                ? "btn-green"
+                : direction.type === "sell"
+                ? "btn-red"
+                : "btn-disabled"
+              }"
+
+              ${
+                direction.type === "wait"
+                ? "disabled"
+                : ""
+              }
+
+              onclick="firstEntry('${stock.code}')">
+
+              ${
+                direction.type === "buy"
+                ? "🟢 模擬第一筆｜沖買"
+                : direction.type === "sell"
+                ? "🔴 模擬第一筆｜沖賣"
+                : "🟡 尚未達進場條件"
+              }
+
+            </button>
+
+
+            <button
+              class="btn-gray"
+              onclick="removeTracking('${stock.code}')">
+
+              移除追蹤
+
+            </button>
+
+          </div>
+
+        `
+
+        :
+
+        `
+
+          <div class="eligibility">
+
+            第一筆：
+            ✅ 已進場
+
+            <br>
+
+            第二筆：
+
+            ${
+              secondEntry
+              ? "✅ 已進場"
+              : "⏳ 等待確認"
+            }
+
+          </div>
+
+
+          <div class="locked">
+
+            🔒 部位進行中，
+            移除追蹤功能已鎖定。
+
+          </div>
+
+
+          <div class="actions">
+
+            ${
+              !secondEntry
+
+              ?
+
+              `
+                <button
+                  class="btn-primary"
+                  onclick="checkSecondEntry('${stock.code}')">
+
+                  檢查第二筆條件
+
+                </button>
+              `
+
+              :
+
+              `
+                <button
+                  class="btn-disabled"
+                  disabled>
+
+                  第二筆已進場
+
+                </button>
+              `
+
+            }
+
+
+            <button
+              class="btn-red"
+              onclick="exitPosition('${stock.code}')">
+
+              🚪 模擬退出
+
+            </button>
+
+          </div>
+
+        `
+
+      }
+
+    </div>
+
+  `;
+
+
+  return html;
+
+}
+
+
+/* =========================================================
+   加入追蹤
+   ========================================================= */
+
+function startTracking(code) {
+
+  if (
+    trackingStocks.length >= 2
+  ) {
+
+    alert(
+      "目前最多同時追蹤 2 筆部位 😆"
+    );
+
+    return;
+
+  }
+
+
+  let stock =
+    stocks.find(
+      x => x.code === code
+    );
+
+
+  if (!stock) return;
+
+
+  if (
+    stock.type === "ETF"
+  ) {
+
+    alert(
+      "ETF 可以查看分析，" +
+      "但目前版本不納入 Tracking 🚫"
+    );
+
+    return;
+
+  }
+
+
+  if (
+    trackingStocks.some(
+      x => x.code === code
+    )
+  ) {
+
+    alert(
+      "這支股票已經在追蹤中了 👀"
+    );
+
+    return;
+
+  }
+
+
+  trackingStocks.push({
+
+    ...stock,
+
+    firstEntry: false,
+
+    secondEntry: false,
+
+    firstEntryTime: null,
+
+    secondEntryTime: null
+
+  });
+
+
+  currentTab = "tracking";
+
+  updateTabs();
+
+  renderTracking();
+
+}
+
+
+/* =========================================================
+   第一筆進場
+   ========================================================= */
+
+function firstEntry(code) {
+
+  let stock =
+    trackingStocks.find(
+      x => x.code === code
+    );
+
+
+  if (!stock) return;
+
+
+  let direction =
+    getDirection(stock);
+
+
+  if (
+    direction.type !== "buy" &&
+    direction.type !== "sell"
+  ) {
+
+    alert(
+      "目前方向已不符合第一筆進場條件。"
+    );
+
+    return;
+
+  }
+
+
+  stock.firstEntry = true;
+
+  stock.firstEntryTime =
+    getTime();
+
+
+  alert(
+
+    `${stock.code} ${stock.name}\n` +
+
+    `模擬第一筆進場：${direction.text}\n` +
+
+    `時間：${stock.firstEntryTime}`
+
+  );
+
+
+  renderTracking();
+
+}
+
+
+/* =========================================================
+   第二筆確認
+   ========================================================= */
+
+function checkSecondEntry(code) {
+
+  let stock =
+    trackingStocks.find(
+      x => x.code === code
+    );
+
+
+  if (!stock) return;
+
+
+  if (!stock.firstEntry) {
+
+    alert(
+      "還沒有第一筆，不能檢查第二筆。"
+    );
+
+    return;
+
+  }
+
+
+  if (stock.secondEntry) {
+
+    alert(
+      "第二筆已經進場。"
+    );
+
+    return;
+
+  }
+
+
+  let direction =
+    getDirection(stock);
+
+
+  if (
+    direction.type !== "buy" &&
+    direction.type !== "sell"
+  ) {
+
+    alert(
+
+      "目前方向已不再符合條件。\n\n" +
+
+      "第二筆暫不確認。"
+
+    );
+
+    return;
+
+  }
+
+
+  if (
+    direction.score < 85
+  ) {
+
+    alert(
+
+      "目前分數低於 85。\n\n" +
+
+      "第二筆暫不確認。"
+
+    );
+
+    return;
+
+  }
+
+
+  stock.secondEntry = true;
+
+  stock.secondEntryTime =
+    getTime();
+
+
+  alert(
+
+    `${stock.code} ${stock.name}\n` +
+
+    `第二筆條件確認 ✅\n` +
+
+    `${direction.text} ${direction.score}`
+
+  );
+
+
+  renderTracking();
+
+}
+
+
+/* =========================================================
+   移除追蹤
+   ========================================================= */
+
+function removeTracking(code) {
+
+  let index =
+    trackingStocks.findIndex(
+      x => x.code === code
+    );
+
+
+  if (index === -1) return;
+
+
+  let stock =
+    trackingStocks[index];
+
+
+  /*
+    已進場時，
+    這個按鈕正常情況根本不會顯示。
+  */
+
+  if (
+    stock.firstEntry
+  ) {
+
+    return;
+
+  }
+
+
+  trackingStocks.splice(
+    index,
+    1
+  );
+
+
+  renderTracking();
+
+}
+
+
+/* =========================================================
+   模擬退出
+   ========================================================= */
+
+function exitPosition(code) {
+
+  let index =
+    trackingStocks.findIndex(
+      x => x.code === code
+    );
+
+
+  if (index === -1) return;
+
+
+  let stock =
+    trackingStocks[index];
+
+
+  if (
+    !stock.firstEntry
+  ) {
+
+    alert(
+
+      "這支股票還沒有進場。\n\n" +
+
+      "如果只是不要看它，" +
+
+      "可以使用「移除追蹤」。"
+
+    );
+
+    return;
+
+  }
+
+
+  let direction =
+    getDirection(stock);
+
+
+  let record = {
+
+    code:
+      stock.code,
+
+    name:
+      stock.name,
+
+    direction:
+
+      direction.type === "buy"
+      ? "🟢 沖買"
+
+      :
+
+      direction.type === "sell"
+      ? "🔴 沖賣"
+
+      :
+
+      "🟡 觀望",
+
+    firstEntryTime:
+      stock.firstEntryTime ||
+      "—",
+
+    secondEntryTime:
+
+      stock.secondEntry
+      ? stock.secondEntryTime
+      : null,
+
+    exitTime:
+      getTime()
+
+  };
+
+
+  completedTrades.unshift(
+    record
+  );
+
+
+  trackingStocks.splice(
+    index,
+    1
+  );
+
+
+  alert(
+
+    `${stock.code} ${stock.name}\n\n` +
+
+    `🚪 模擬退出完成\n` +
+
+    `時間：${record.exitTime}\n\n` +
+
+    `這筆部位已結束。\n` +
+
+    `股票之後仍然可以重新出現在 Radar。`
+
+  );
+
+
+  renderTracking();
+
+}
+
+
+/* =========================================================
+   Tab
+   ========================================================= */
+
+function showTab(tab) {
+
+  currentTab = tab;
+
+  updateTabs();
+
+
+  if (tab === "radar") {
+
+    renderRadar();
+
+  }
+
+  else if (tab === "individual") {
+
+    renderIndividual();
+
+  }
+
+  else if (tab === "tracking") {
+
+    renderTracking();
+
+  }
+
+}
+
+
+function updateTabs() {
+
+  document
+    .getElementById("tabRadar")
+    .classList.toggle(
+      "active",
+      currentTab === "radar"
+    );
+
+
+  document
+    .getElementById("tabIndividual")
+    .classList.toggle(
+      "active",
+      currentTab === "individual"
+    );
+
+
+  document
+    .getElementById("tabTracking")
+    .classList.toggle(
+      "active",
+      currentTab === "tracking"
+    );
+
+}
+
+
+/* =========================================================
+   時間
+   ========================================================= */
+
+function getTime() {
+
+  let now =
+    new Date();
+
+
+  return now.toLocaleTimeString(
+    "zh-TW",
+    {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    }
+  );
+
+}
+
+
+/* =========================================================
+   Radar 模擬行情更新
+   每 60 秒
+   ========================================================= */
+
+function simulateRadarUpdate() {
+
+  stocks.forEach(
+    stock => {
+
+      if (
+        stock.type === "ETF"
+      ) return;
+
+
+      stock.buyScore =
+        clamp(
+
+          stock.buyScore +
+
+          Math.floor(
+            Math.random() * 7
+          ) - 3,
+
+          40,
+          99
+
+        );
+
+
+      stock.sellScore =
+        clamp(
+
+          stock.sellScore +
+
+          Math.floor(
+            Math.random() * 7
+          ) - 3,
+
+          40,
+          99
+
+        );
+
+    }
+  );
+
+
+  /*
+    Tracking 中的股票同步
+  */
+
+  syncTrackingStocks();
+
+
+  if (
+    currentTab === "radar"
+  ) {
+
+    renderRadar();
+
+  }
+
+  else if (
+    currentTab === "tracking"
+  ) {
+
+    renderTracking();
+
+  }
+
+}
+
+
+/* =========================================================
+   Tracking 高頻更新
+   每 5 秒
+   ========================================================= */
+
+function simulateTrackingUpdate() {
+
+  if (
+    trackingStocks.length === 0
+  ) {
+
+    return;
+
+  }
+
+
+  trackingStocks.forEach(
+    tracked => {
+
+      /*
+        模擬即時價格微幅變動
+      */
+
+      let priceChange =
+        (
+          Math.random() * 0.006
+        ) - 0.003;
+
+
+      tracked.price =
+        Number(
+          (
+            tracked.price *
+            (1 + priceChange)
+          ).toFixed(2)
+        );
+
+
+      /*
+        模擬買賣分數快速變化
+      */
+
+      tracked.buyScore =
+        clamp(
+
+          tracked.buyScore +
+
+          Math.floor(
+            Math.random() * 5
+          ) - 2,
+
+          40,
+          99
+
+        );
+
+
+      tracked.sellScore =
+        clamp(
+
+          tracked.sellScore +
+
+          Math.floor(
+            Math.random() * 5
+          ) - 2,
+
+          40,
+          99
+
+        );
+
+
+      /*
+        模擬因素同步小幅變化
+      */
+
+      tracked.factors.trend =
+        clamp(
+          tracked.factors.trend +
+          Math.floor(Math.random() * 3) - 1,
+          40,
+          99
+        );
+
+
+      tracked.factors.volume =
+        clamp(
+          tracked.factors.volume +
+          Math.floor(Math.random() * 3) - 1,
+          40,
+          99
+        );
+
+
+      tracked.factors.price =
+        clamp(
+          tracked.factors.price +
+          Math.floor(Math.random() * 3) - 1,
+          40,
+          99
+        );
+
+
+      tracked.factors.momentum =
+        clamp(
+          tracked.factors.momentum +
+          Math.floor(Math.random() * 3) - 1,
+          40,
+          99
+        );
+
+
+      tracked.factors.risk =
+        clamp(
+          tracked.factors.risk +
+          Math.floor(Math.random() * 3) - 1,
+          40,
+          99
+        );
+
+    }
+  );
+
+
+  lastTrackingUpdate =
+    getTime();
+
+
+  /*
+    只有 Tracking 頁面時
+    才重新畫面。
+
+    這樣不會干擾 Radar。
+  */
+
+  if (
+    currentTab === "tracking"
+  ) {
+
+    renderTracking();
+
+  }
+
+}
+
+
+/* =========================================================
+   Tracking 與 Radar 資料同步
+   ========================================================= */
+
+function syncTrackingStocks() {
+
+  trackingStocks.forEach(
+    tracked => {
+
+      let latest =
+        stocks.find(
+          x =>
+            x.code === tracked.code
+        );
+
+
+      if (!latest) return;
+
+
+      /*
+        Radar 的資料
+        同步給 Tracking。
+
+        進場狀態本身不會被覆蓋。
+      */
+
+      tracked.buyScore =
+        latest.buyScore;
+
+      tracked.sellScore =
+        latest.sellScore;
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   工具
+   ========================================================= */
+
+function clamp(
+  value,
+  min,
+  max
+) {
+
+  return Math.min(
+    max,
+    Math.max(
+      min,
+      value
+    )
+  );
+
+}
+
+
+/* =========================================================
+   初始畫面
+   ========================================================= */
+
+renderRadar();
+
+
+/* =========================================================
+   Radar：
+   每 60 秒更新
+   ========================================================= */
+
+setInterval(
+  simulateRadarUpdate,
+  60000
+);
+
+
+/* =========================================================
+   Tracking：
+   每 5 秒更新
+   ========================================================= */
+
+setInterval(
+  simulateTrackingUpdate,
+  5000
+);
+
+</script>
+
+</body>
+</html>
