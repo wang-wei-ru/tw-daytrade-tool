@@ -2,1869 +2,3634 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>當沖雷達 v0.9.3</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>📡 隔日當沖雷達 v1.0.6</title>
+
 <style>
-*{box-sizing:border-box}
-html,body{
-  margin:0;
-  padding:0;
-  background:#f5f7fa;
-  color:#222;
-  font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif
+:root {
+  --bg: #f4f6f8;
+  --card: #ffffff;
+  --text: #172033;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --blue: #2563eb;
+  --green: #059669;
+  --red: #dc2626;
+  --yellow: #d97706;
+  --gray: #64748b;
+  --shadow: 0 4px 12px rgba(0, 0, 0, .04);
 }
-body{padding-bottom:30px}
-button,input,select{font:inherit}
-button{-webkit-tap-highlight-color:transparent}
-.header{
-  background:#fff;
-  padding:18px 16px 14px;
-  border-bottom:1px solid #e5e7eb;
-  position:sticky;
-  top:0;
-  z-index:20
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
-.header-title{
-  font-size:22px;
-  font-weight:800;
-  margin-bottom:5px
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
+  line-height: 1.5;
 }
-.header-subtitle{
-  color:#6b7280;
-  font-size:12px;
-  line-height:1.5
+
+button, input, select {
+  font: inherit;
 }
-.tabs{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:6px;
-  padding:10px 12px;
-  background:#fff;
-  border-bottom:1px solid #e5e7eb;
-  position:sticky;
-  top:77px;
-  z-index:19
+
+button {
+  cursor: pointer;
 }
-.tab{
-  border:none;
-  background:#f1f3f5;
-  color:#555;
-  border-radius:10px;
-  padding:10px 4px;
-  font-weight:700;
-  cursor:pointer
+
+.app {
+  max-width: 1050px;
+  margin: 0 auto;
+  padding: 12px;
 }
-.tab.active{
-  background:#222;
-  color:#fff
+
+.header {
+  background: linear-gradient(135deg, #111827, #26354d);
+  color: #fff;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: var(--shadow);
 }
-.container{
-  max-width:760px;
-  margin:0 auto;
-  padding:12px
+
+.header h1 {
+  margin: 0;
+  font-size: 21px;
 }
-.card{
-  background:#fff;
-  border-radius:14px;
-  padding:14px;
-  margin-bottom:12px;
-  border:1px solid #e6e8eb;
-  box-shadow:0 2px 8px rgba(0,0,0,.03)
+
+.header p {
+  margin: 6px 0 0;
+  color: #cbd5e1;
+  font-size: 12px;
+  line-height: 1.6;
 }
-.section-title{
-  font-size:17px;
-  font-weight:800;
-  margin-bottom:8px
+
+.version {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .1);
+  font-size: 11px;
 }
-.small{
-  font-size:12px;
-  color:#6b7280;
-  line-height:1.55
+
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin: 12px 0;
 }
-.status{
-  border-radius:10px;
-  padding:10px 12px;
-  margin-bottom:10px;
-  font-size:13px;
-  line-height:1.5
+
+.tab {
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 4px;
+  color: var(--muted);
+  font-weight: 700;
+  text-align: center;
+  font-size: 13px;
+  transition: all .2s;
 }
-.status.info{background:#eef5ff;color:#24518f}
-.status.warning{background:#fff7df;color:#805d00}
-.status.success{background:#ecfdf3;color:#166534}
-.status.error{background:#fff0f0;color:#a32121}
-.search-row{
-  display:flex;
-  gap:8px
+
+.tab.active {
+  background: #111827;
+  color: #fff;
+  border-color: #111827;
 }
-.search-row input{flex:1}
-input,select{
-  width:100%;
-  padding:11px 12px;
-  border:1px solid #d7dbe0;
-  border-radius:10px;
-  background:#fff;
-  outline:none
+
+.panel {
+  display: none;
 }
-button.primary,
-button.secondary,
-button.danger,
-button.success-btn{
-  border:none;
-  border-radius:10px;
-  padding:11px 13px;
-  font-weight:700;
-  cursor:pointer
+
+.panel.active {
+  display: block;
 }
-button.primary{background:#222;color:#fff}
-button.secondary{background:#edf0f3;color:#222}
-button.success-btn{background:#16834b;color:#fff}
-button.danger{background:#d83a3a;color:#fff}
-button:disabled{opacity:.45;cursor:not-allowed}
-.full-button{
-  width:100%;
-  margin-top:8px
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
 }
-.market-title{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  margin-bottom:10px
+
+.card h2 {
+  margin: 0 0 10px;
+  font-size: 16px;
 }
-.market-badge{
-  font-size:11px;
-  padding:5px 8px;
-  border-radius:8px;
-  background:#eef2ff;
-  color:#4338ca;
-  white-space:nowrap
+
+.card h3 {
+  margin: 0 0 6px;
+  font-size: 14px;
 }
-.market-badge.otc{
-  background:#fff4e8;
-  color:#9a4d00
+
+.controls {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
 }
-.radar-rank{
-  font-size:11px;
-  font-weight:800;
-  color:#777;
-  margin-bottom:5px
+
+.input {
+  flex: 1;
+  min-width: 140px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #fff;
+  color: var(--text);
+  outline: none;
 }
-.radar-item{
-  border:1px solid #e1e5e9;
-  border-radius:13px;
-  padding:12px;
-  margin-bottom:10px;
-  background:#fff
+
+.input:focus {
+  border-color: var(--blue);
 }
-.radar-top{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  align-items:flex-start
+
+.btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  background: var(--blue);
+  color: #fff;
+  font-weight: 700;
+  transition: opacity .2s;
 }
-.stock-name{
-  font-size:17px;
-  font-weight:800
+
+.btn:active {
+  opacity: .85;
 }
-.stock-code{
-  color:#777;
-  font-size:12px;
-  margin-top:2px
+
+.btn.secondary {
+  background: #e5e7eb;
+  color: #111827;
 }
-.price{
-  font-size:18px;
-  font-weight:800;
-  text-align:right
+
+.btn.green {
+  background: var(--green);
 }
-.gap-badge{
-  display:inline-block;
-  font-size:10px;
-  font-weight:700;
-  padding:2px 5px;
-  border-radius:4px;
-  margin-left:4px;
-  vertical-align:middle;
+
+.btn.red {
+  background: var(--red);
 }
-.gap-up{background:#ecfdf3;color:#166534}
-.gap-down{background:#fff0f0;color:#b32222}
-.direction{
-  margin-top:10px;
-  padding:9px 10px;
-  border-radius:9px;
-  font-weight:800;
-  text-align:center
+
+.btn.gray {
+  background: #475569;
 }
-.direction.buy{background:#eaf8ef;color:#14733e}
-.direction.sell{background:#fff0f0;color:#b32222}
-.direction.wait{background:#f4f4f4;color:#666}
-.direction.etf{background:#f0edff;color:#5b43a5}
-.factor-grid{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:6px;
-  margin-top:10px
+
+.notice, .warning, .success {
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 1.6;
 }
-.factor{
-  border-radius:9px;
-  background:#f5f6f7;
-  padding:7px 3px;
-  text-align:center
+
+.notice {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e3a8a;
 }
-.factor-label{
-  font-size:11px;
-  color:#777
+
+.warning {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #9a3412;
 }
-.factor-value{
-  font-weight:800;
-  font-size:14px;
-  margin-top:2px
+
+.success {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
 }
-.score-row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  margin-top:10px
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 8px;
 }
-.score-box{
-  border-radius:10px;
-  background:#f7f7f7;
-  padding:10px;
-  text-align:center
+
+.status-item {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 12px;
 }
-.score-title{
-  font-size:12px;
-  color:#777
+
+.status-item .title {
+  font-weight: 700;
+  margin-bottom: 2px;
 }
-.score-value{
-  font-size:22px;
-  font-weight:900;
-  margin-top:2px
+
+.status-ok { color: #047857; }
+.status-fail { color: #b91c1c; }
+.status-warn { color: #92400e; }
+.status-idle { color: #64748b; }
+
+.status {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 10px;
+  background: #f8fafc;
+  border-radius: 10px;
+  font-size: 12px;
+  color: var(--muted);
 }
-.metric-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:8px;
-  margin-top:10px
+
+.progress-wrap {
+  margin-top: 10px;
+  display: none;
 }
-.metric{
-  background:#f7f8f9;
-  padding:10px;
-  border-radius:10px
+
+.progress-bg {
+  width: 100%;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
 }
-.metric-label{
-  font-size:11px;
-  color:#777
+
+.progress-bar {
+  width: 0%;
+  height: 100%;
+  background: var(--blue);
+  transition: width .2s ease;
 }
-.metric-value{
-  font-size:16px;
-  font-weight:800;
-  margin-top:3px
+
+.progress-text {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--muted);
 }
-.detail-title{
-  font-size:20px;
-  font-weight:900
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
 }
-.detail-subtitle{
-  color:#777;
-  font-size:13px;
-  margin-top:2px
+
+.grid3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
 }
-.tracking-card{
-  border:2px solid #222;
-  border-radius:14px;
-  padding:13px;
-  margin-bottom:12px;
-  background:#fff
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
 }
-.tracking-locked{background:#fafafa}
-.tracking-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:8px
+
+.metric {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
 }
-.lock-badge{
-  font-size:11px;
-  padding:5px 7px;
-  border-radius:8px;
-  background:#222;
-  color:#fff;
-  white-space:nowrap
+
+.metric .label {
+  font-size: 11px;
+  color: var(--muted);
 }
-.lot-box{
-  margin-top:10px;
-  background:#f5f6f7;
-  border-radius:10px;
-  padding:10px
+
+.metric .value {
+  margin-top: 2px;
+  font-size: 17px;
+  font-weight: 800;
 }
-.entry-price{
-  font-size:18px;
-  font-weight:900
+
+.signal {
+  border-radius: 14px;
+  padding: 14px;
+  text-align: center;
+  margin-bottom: 10px;
 }
-.tracking-buttons{
-  display:grid;
-  gap:8px;
-  margin-top:10px
+
+.signal.long {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
 }
-.backtest-control{
-  display:grid;
-  grid-template-columns:1fr 110px;
-  gap:8px
+
+.signal.short {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
 }
-.result-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:8px
+
+.signal.neutral {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  color: #334155;
 }
-.result-box{
-  background:#f6f7f8;
-  border-radius:10px;
-  padding:11px
+
+.signal.caution {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #92400e;
 }
-.result-label{
-  font-size:11px;
-  color:#777
+
+.signal .big {
+  font-size: 26px;
+  font-weight: 900;
 }
-.result-value{
-  font-size:18px;
-  font-weight:900;
-  margin-top:3px
+
+.signal .score {
+  margin-top: 4px;
+  font-size: 12px;
 }
-.debug-list{
-  max-height:350px;
-  overflow-y:auto;
-  font-size:11px;
-  line-height:1.5;
-  background:#111;
-  color:#ddd;
-  border-radius:10px;
-  padding:10px
+
+.signal .sub {
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 700;
 }
-.debug-row{
-  padding:5px 0;
-  border-bottom:1px solid #333
+
+.action-box {
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 10px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
 }
-.debug-ok{color:#7ee787}
-.debug-error{color:#ff8b8b}
-.debug-warn{color:#ffd66b}
-.loading{
-  text-align:center;
-  padding:22px 10px;
-  color:#666
+
+.action-box.long {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
 }
-.empty{
-  padding:18px;
-  text-align:center;
-  color:#777;
-  background:#fafafa;
-  border-radius:10px
+
+.action-box.short {
+  background: #fef2f2;
+  border-color: #fecaca;
 }
-.trade-record{
-  border-top:1px solid #e5e7eb;
-  padding-top:9px;
-  margin-top:9px;
-  font-size:12px
+
+.action-box.caution {
+  background: #fffbeb;
+  border-color: #fde68a;
 }
-.hidden{display:none!important}
-@media(max-width:520px){
-  .factor-grid{
-    grid-template-columns:repeat(5,1fr)
-  }
-  .factor{
-    padding:6px 2px
-  }
-  .factor-label{
-    font-size:10px
-  }
-  .factor-value{
-    font-size:13px
-  }
+
+.action-box.neutral {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.action-title {
+  font-size: 15px;
+  font-weight: 900;
+  margin-bottom: 4px;
+}
+
+.action-desc {
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.price-zone {
+  margin-top: 8px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.65);
+  border: 1px dashed rgba(100,116,139,.35);
+  font-size: 12px;
+}
+
+.table-wrap {
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+}
+
+th, td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+th {
+  background: #f8fafc;
+  color: #475569;
+  position: sticky;
+  top: 0;
+}
+
+tr:last-child td {
+  border-bottom: 0;
+}
+
+tr.stock-row {
+  cursor: pointer;
+}
+
+tr.stock-row:hover {
+  background: #f8fafc;
+}
+
+.stock-code-link {
+  color: #2563eb;
+  font-weight: 900;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.badge.long { background: #d1fae5; color: #047857; }
+.badge.short { background: #fee2e2; color: #b91c1c; }
+.badge.neutral { background: #e2e8f0; color: #475569; }
+.badge.warn { background: #fef3c7; color: #92400e; }
+.badge.blue { background: #dbeafe; color: #1d4ed8; }
+
+.bar {
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.bar > span {
+  display: block;
+  height: 100%;
+  background: #64748b;
+}
+
+.factor {
+  display: grid;
+  grid-template-columns: 90px 1fr 40px;
+  gap: 6px;
+  align-items: center;
+  margin: 8px 0;
+  font-size: 12px;
+}
+
+.factor-name { color: #475569; }
+.factor-score { text-align: right; font-weight: 700; }
+
+.small {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.empty {
+  padding: 20px 10px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.quick-codes {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.quick-code {
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+}
+
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.section-title h2 {
+  margin: 0;
+}
+
+.footer {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 11px;
+  padding: 14px 0 24px;
+}
+
+@media(max-width: 650px) {
+  .app { padding: 8px; }
+  .grid, .grid3, .info-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .header h1 { font-size: 19px; }
+  .metric { padding: 9px; }
+  .metric .value { font-size: 15px; }
 }
 </style>
 </head>
+
 <body>
-<div class="header">
-  <div class="header-title">
-    📡 當沖雷達 v0.9.3
-  </div>
-  <div class="header-subtitle">
-    TWSE 上市＋TPEx 上櫃｜官方市場資料｜98～252｜TOP 10
+
+<div class="app">
+  <header class="header">
+    <h1>📡 隔日當沖雷達</h1>
+    <p>
+      收盤後分析歷史資料，協助判斷下一交易日偏多、偏空或不做。<br>
+      只使用日行情與歷史資料，不使用盤中即時資料。
+    </p>
+    <span class="version">v1.0.6 · EOD Historical Decision Radar</span>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="radar">📡 明日雷達</button>
+    <button class="tab" data-tab="stock">🔎 個股／驗證</button>
+    <button class="tab" data-tab="tracking">⭐ 追蹤</button>
+  </nav>
+
+  <!-- 雷達面板 -->
+  <section id="radar" class="panel active">
+    <div class="card">
+      <h2>📡 明日當沖方向</h2>
+      <div class="notice">
+        這裡以原本 v1.0.5 雷達邏輯為基礎。<br><br>
+        <b>雷達範圍：98～252 元</b><br>
+        上市：使用 TWSE 日行情。<br>
+        上櫃：使用已驗證可取得的批次歷史資料。<br><br>
+        只從可取得的上市／上櫃日行情中整理候選，再使用歷史價格與成交量分析。<br><br>
+        個股查詢則不受 98～252 元限制。
+      </div>
+      <div style="height:10px"></div>
+      <div class="controls">
+        <button class="btn" onclick="runRadar()">🚀 開始分析</button>
+      </div>
+      <div class="progress-wrap" id="radarProgressWrap">
+        <div class="progress-bg">
+          <div class="progress-bar" id="radarProgress"></div>
+        </div>
+        <div class="progress-text" id="radarProgressText">準備資料……</div>
+      </div>
+      <div style="height:8px"></div>
+      <div class="status">
+        <span id="dataStatus">資料尚未載入</span>
+        <span id="dataDate">—</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🔎 雷達結果</h2>
+      <div id="radarResult">
+        <div class="empty">按下「開始分析」後，系統會整理 98～252 元的候選股票。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📡 資料狀態</h2>
+      <div class="status-grid">
+        <div class="status-item">
+          <div class="title">TWSE 官方日行情</div>
+          <div id="statusTWSE" class="status-idle">尚未取得</div>
+        </div>
+        <div class="status-item">
+          <div class="title">TPEx 批次日行情</div>
+          <div id="statusTPEx" class="status-idle">尚未取得</div>
+        </div>
+        <div class="status-item">
+          <div class="title">TWSE 當沖資格</div>
+          <div id="statusTWSEDT" class="status-idle">尚未取得</div>
+        </div>
+        <div class="status-item">
+          <div class="title">TPEx 當沖資格</div>
+          <div id="statusTPExDT" class="status-idle">尚未取得</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>⚠️ 使用方式</h2>
+      <div class="warning">
+        雷達不是下單指令。<br><br>
+        <b>🟢 可觀察做多</b>：目前條件偏多，且尚未被判定為過度追價。<br>
+        <b>🔴 可觀察做空</b>：目前條件偏空，且尚未被判定為過度追價。<br>
+        <b>🟡 勿追多／勿追空</b>：方向仍偏多／偏空，但價格位置較容易出現追價風險。<br>
+        <b>🟡 等回踩／等轉弱</b>：方向尚未達到直接觀察門檻，等待價格結構進一步確認。<br>
+        <b>⚪ 等待</b>：目前多空證據不足。<br><br>
+        「建議價格觀察區」是依目前收盤、5／10日均線與近期價格位置計算的觀察範圍，
+        不是保證成交價，也不是保證支撐／壓力。
+      </div>
+    </div>
+  </section>
+
+  <!-- 個股面板 -->
+  <section id="stock" class="panel">
+    <div class="card">
+      <h2>🔎 個股分析</h2>
+      <div class="notice">
+        <b>這裡不限制 98～252 元。</b><br><br>
+        你可以輸入想研究的股票代號，系統會自動嘗試判斷上市或上櫃，再取得歷史資料。
+      </div>
+      <div style="height:10px"></div>
+      <div class="controls">
+        <input id="stockCode" class="input" placeholder="輸入股票代號，例如 2330" maxlength="6" inputmode="numeric">
+        <button class="btn" onclick="analyzeStock()">🔎 分析個股</button>
+      </div>
+      <div class="quick-codes">
+        <button class="quick-code" onclick="quickStock('2330')">2330</button>
+        <button class="quick-code" onclick="quickStock('2344')">2344</button>
+        <button class="quick-code" onclick="quickStock('4966')">4966</button>
+        <button class="quick-code" onclick="quickStock('2454')">2454</button>
+      </div>
+    </div>
+
+    <div id="stockResult">
+      <div class="card">
+        <div class="empty">請輸入股票代號。</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📊 歷史驗證</h2>
+      <div class="notice">
+        驗證會用「當天收盤以前的資料」產生當天系統方向，再觀察下一交易日：<br><br>
+        <b>下一交易日開盤 → 下一交易日收盤</b><br><br>
+        用來避免把未來資料偷拿來算訊號。
+      </div>
+      <div style="height:10px"></div>
+      <div class="grid">
+        <div>
+          <label class="small">股票</label>
+          <input id="backtestCode" class="input" placeholder="例如 2330" maxlength="6" inputmode="numeric">
+        </div>
+        <div>
+          <label class="small">測試天數</label>
+          <select id="backtestDays" class="input">
+            <option value="20">20 個交易日</option>
+            <option value="60" selected>60 個交易日</option>
+            <option value="120">120 個交易日</option>
+            <option value="240">240 個交易日</option>
+          </select>
+        </div>
+      </div>
+      <div style="height:10px"></div>
+      <button class="btn" style="width:100%" onclick="runBacktest()">📊 開始歷史驗證</button>
+    </div>
+
+    <div id="backtestResult"></div>
+  </section>
+
+  <!-- 追蹤面板 -->
+  <section id="tracking" class="panel">
+    <div class="card">
+      <h2>⭐ 我的追蹤</h2>
+      <div class="notice">
+        最多追蹤 2 檔。<br><br>
+        本版本沒有即時行情，也沒有自動刷新。<br>
+        「更新」只會重新取得日行情與歷史資料。
+      </div>
+      <div style="height:10px"></div>
+      <div class="controls">
+        <input id="trackingCode" class="input" placeholder="股票代號，例如 2330" maxlength="6" inputmode="numeric">
+        <button class="btn" onclick="addTracking()">⭐ 加入追蹤</button>
+      </div>
+    </div>
+    <div id="trackingResult"></div>
+  </section>
+
+  <div class="footer">
+    📡 隔日當沖雷達 v1.0.6<br>
+    歷史資料分析工具，不構成投資建議。
   </div>
 </div>
-<div class="tabs">
-  <button class="tab active"
-          onclick="switchTab('radar')">
-    雷達
-  </button>
-  <button class="tab"
-          onclick="switchTab('stock')">
-    個股
-  </button>
-  <button class="tab"
-          onclick="switchTab('tracking')">
-    追蹤
-  </button>
-  <button class="tab"
-          onclick="switchTab('backtest')">
-    回測
-  </button>
-</div>
-<div class="container">
-<!-- ======================================================
-     雷達
-====================================================== -->
-<div id="radarTab">
-  <div class="card">
-    <div class="section-title">
-      📡 今日雷達
-    </div>
-    <div class="small">
-      上市＋上櫃一起掃描。<br>
-      只保留官方當沖標的、股價 98～252 元、排除 ETF。<br>
-      最後依「實際可當沖方向」分數由高到低取 TOP 10。<br>
-      非交易時段只顯示最近交易日資料，不產生當日進場訊號。
-    </div>
-    <div id="radarStatus"
-         class="status info"
-         style="margin-top:10px">
-      正在準備雷達……
-    </div>
-    <div id="radarRefreshInfo"
-         class="small">
-      尚未完成更新
-    </div>
-  </div>
-  <div id="radarTopSection"></div>
-  <div class="card">
-    <button class="secondary full-button"
-            onclick="loadRadarData()">
-      🔄 立即更新雷達
-    </button>
-    <button class="secondary full-button"
-            onclick="showDebugPanel()">
-      🛠️ 查看系統診斷
-    </button>
-  </div>
-  <div id="radarDiagnosticsCard"
-       class="card hidden">
-    <div class="section-title">
-      🛠️ 雷達診斷
-    </div>
-    <div class="small"
-         style="margin-bottom:8px">
-      可查看實際交易日、上市／上櫃市場資料、
-      當沖資格與歷史資料取得狀況。
-    </div>
-    <div id="radarDiagnostics"></div>
-  </div>
-</div>
-<!-- ======================================================
-     個股
-====================================================== -->
-<div id="stockTab"
-     class="hidden">
-  <div class="card">
-    <div class="section-title">
-      🔎 查詢個股 / ETF
-    </div>
-    <div class="search-row">
-      <input
-        id="stockCodeInput"
-        type="text"
-        maxlength="8"
-        placeholder="例如 2330、2344、4966、0050"
-        autocomplete="off"
-        autocapitalize="characters"
-      >
-      <button class="primary"
-              onclick="searchStock()">
-        查詢
-      </button>
-    </div>
-    <div class="small"
-         style="margin-top:8px">
-      系統會自動判斷上市 / 上櫃 / ETF。
-    </div>
-  </div>
-  <div id="stockMessage"></div>
-  <div id="stockDetail"></div>
-</div>
-<!-- ======================================================
-     追蹤
-====================================================== -->
-<div id="trackingTab"
-     class="hidden">
-  <div class="card">
-    <div class="section-title">
-      🎯 追蹤
-    </div>
-    <div class="small">
-      最多同時追蹤 2 檔。<br>
-      進場後不可直接移除，必須完成出場。
-    </div>
-    <div id="trackingStatus"
-         class="status info"
-         style="margin-top:10px">
-      尚未追蹤股票
-    </div>
-  </div>
-  <div id="trackingList"></div>
-  <div class="card">
-    <div class="small">
-      ⚠️ 目前仍使用日資料。<br>
-      10 秒更新代表重新檢查資料，
-      不代表取得盤中即時成交價。
-    </div>
-  </div>
-  <div class="card">
-    <div class="section-title">
-      📋 今日已完成
-    </div>
-    <div id="completedTrades"></div>
-  </div>
-</div>
-<!-- ======================================================
-     回測
-====================================================== -->
-<div id="backtestTab"
-     class="hidden">
-  <div class="card">
-    <div class="section-title">
-      📊 歷史訊號研究
-    </div>
-    <div class="status warning">
-      這是歷史日線訊號研究，
-      不是完整盤中當沖勝率。
-    </div>
-    <div class="backtest-control">
-      <input
-        id="backtestCode"
-        type="text"
-        maxlength="8"
-        placeholder="例如 2330"
-      >
-      <select id="backtestMonths">
-        <option value="1">
-          近 1 個月
-        </option>
-        <option value="2">
-          近 2 個月
-        </option>
-        <option value="3"
-                selected>
-          近 3 個月
-        </option>
-        <option value="6">
-          近 6 個月
-        </option>
-        <option value="12">
-          近 12 個月
-        </option>
-      </select>
-    </div>
-    <button class="primary full-button"
-            onclick="runBacktest()">
-      📊 開始研究
-    </button>
-    <div class="small"
-         style="margin-top:8px">
-      不包含手續費、交易稅、滑價。
-    </div>
-  </div>
-  <div id="backtestResult"></div>
-</div>
-</div>
+
 <script>
-/* =========================================================
-   版本 / 規則
-========================================================= */
-const APP_VERSION = "0.9.3";
-const MAX_TRACKING = 2;
-const MAX_LOTS = 2;
-const RADAR_MIN_PRICE = 98;
-const RADAR_MAX_PRICE = 252;
-const RADAR_MAX_STOCKS = 10;
-const SIGNAL_SCORE = 85;
-const SIGNAL_GAP = 8;
-const RADAR_HISTORY_MONTHS = 3;
-const RADAR_CONCURRENCY = 3;
+const APP_VERSION = "1.0.6";
 
-/* =========================================================
-   官方資料來源
-========================================================= */
-const TWSE_OPENAPI = "https://openapi.twse.com.tw/v1";
-const TWSE_DAYTRADE_OPENAPI = `${TWSE_OPENAPI}/exchangeReport/TWTB4U`;
-const TWSE_DAILY_API = `${TWSE_OPENAPI}/exchangeReport/MI_INDEX`;
-const TPEX_OPENAPI = "https://www.tpex.org.tw/openapi/v1";
-const TPEX_DAYTRADE_OPENAPI = `${TPEX_OPENAPI}/tpex_securities`;
-const TPEX_DAILY_OPENAPI = `${TPEX_OPENAPI}/tpex_mainboard_daily_close_quotes`;
-const TWSE_HISTORY_API = "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY";
-const TWSE_HISTORY_FALLBACK_API = "https://www.twse.com.tw/exchangeReport/STOCK_DAY";
-const TPEX_HISTORY_API = "https://www.tpex.org.tw/www/zh-tw/afterTrading/tradingStock";
-
-/* =========================================================
-   狀態
-========================================================= */
-let marketStocks = [];
-let trackingStocks = [];
-let completedTrades = [];
-let selectedStock = null;
-let radarLoading = false;
-let stockSearchLoading = false;
-let backtestLoading = false;
-let trackingRefreshing = false;
-let radarAutoRefreshTimer = null;
-let trackingAutoRefreshTimer = null;
-let lastRadarDiagnostics = [];
-let twseDayTradeSet = new Map();
-let tpexDayTradeSet = new Map();
-let twseDirectory = new Map();
-let tpexDirectory = new Map();
-let twseDirectoryLoaded = false;
-let tpexDirectoryLoaded = false;
-let marketQuoteData = {
-  TWSE:{ date:"", map:new Map() },
-  TPEX:{ date:"", map:new Map() }
-};
-const historyCache = new Map();
-const marketDataCache = { TWSE:{ time:0 }, TPEX:{ time:0 } };
-const DAYTRADE_CACHE_TIME = 10 * 60 * 1000;
-const MARKET_QUOTE_CACHE_TIME = 5 * 60 * 1000;
-const CACHE_TIME = 10 * 60 * 1000;
-const debugLogs = [];
-
-/* =========================================================
-   名稱備援
-========================================================= */
-const SECURITY_FALLBACK = {
-  "1101":"台泥","1216":"統一","1301":"台塑","2002":"中鋼","2303":"聯電",
-  "2317":"鴻海","2330":"台積電","2344":"華邦電","2357":"華碩","2382":"廣達",
-  "2454":"聯發科","2603":"長榮","2615":"萬海","2881":"富邦金","2882":"國泰金",
-  "2883":"凱基金","2884":"玉山金","2891":"中信金","3008":"大立光","3034":"聯詠",
-  "3045":"台灣大","3711":"日月光投控","4938":"和碩","5880":"合庫金"
+const CONFIG = {
+  RADAR_MIN_PRICE: 98,
+  RADAR_MAX_PRICE: 252,
+  RADAR_MAX_STOCKS: 10,
+  RADAR_CANDIDATES: 60,
+  MIN_VOLUME: 100000,
+  RADAR_HISTORY_DAYS: 100,
+  STOCK_HISTORY_DAYS: 180,
+  BACKTEST_HISTORY_DAYS: 280,
+  SIGNAL_THRESHOLD: 62,
+  SIGNAL_GAP: 8,
+  REQUEST_TIMEOUT: 12000,
+  RADAR_CONCURRENCY: 8,
+  TWSE_API: "https://www.twse.com.tw",
+  TWSE_OPENAPI: "https://openapi.twse.com.tw/v1",
+  TPEX_API: "https://www.tpex.org.tw",
+  TPEX_OPENAPI: "https://www.tpex.org.tw/openapi/v1",
+  TPEX_BATCH_RAW: "https://raw.githubusercontent.com/twcs-analysis/tw-stock-collector/main/data/raw/price",
+  PROXY: "https://api.allorigins.win/raw?url="
 };
 
-/* =========================================================
-   基本工具
-========================================================= */
-function normalizeCode(code){
-  return String(code || "").trim().toUpperCase();
-}
-function isValidStockCode(code){
-  code = normalizeCode(code);
-  return /^[0-9]{4,6}$/.test(code) || /^[0-9]{4,6}[A-Z]$/.test(code);
-}
-function escapeHTML(value){
-  return String(value ?? "")
-    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;").replace(/'/g,"&#039;");
-}
-function toNumber(value){
-  if(value === null || value === undefined) return NaN;
-  const s = String(value).replace(/,/g,"").replace(/%/g,"").replace(/－/g,"-").trim();
-  if(s === "" || s === "--" || s === "-") return NaN;
-  return Number(s);
-}
-function formatNumber(value,digits=2){
-  const n = Number(value);
-  if(!Number.isFinite(n)) return "--";
-  return n.toLocaleString("zh-TW",{minimumFractionDigits:digits,maximumFractionDigits:digits});
-}
-function formatPercent(value,digits=2){
-  const n = Number(value);
-  if(!Number.isFinite(n)) return "--";
-  return `${n.toFixed(digits)}%`;
-}
-function formatTime(date){
-  const d = date instanceof Date ? date : new Date(date);
-  if(Number.isNaN(d.getTime())) return "--";
-  return d.toLocaleTimeString("zh-TW",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
-}
-function sleep(ms){
-  return new Promise(resolve => setTimeout(resolve,ms));
-}
-function average(values){
-  const arr = values.filter(v => Number.isFinite(v));
-  if(!arr.length) return null;
-  return arr.reduce((a,b)=>a+b,0) / arr.length;
-}
+let STATE = {
+  market: [],
+  twse: [],
+  tpex: [],
+  eligibilityTWSE: new Set(),
+  eligibilityTPEx: new Set(),
+  eligibilityTWSELoaded: false,
+  eligibilityTPExLoaded: false,
+  eligibilityPromise: null,
+  dataDate: "",
+  cache: {},
+  tracking: [],
 
-/* =========================================================
-   日期
-========================================================= */
-function getMonthDate(offset=0){
-  const d = new Date();
-  d.setDate(1);
-  d.setMonth(d.getMonth()-offset);
-  return [d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),"01"].join("");
-}
-function normalizeApiDate(value){
-  if(value === null || value === undefined) return "";
-  const s = String(value).trim();
-  if(!s) return "";
-  const digits = s.replace(/\D/g,"");
-  if(digits.length === 8){
-    const y = Number(digits.slice(0,4));
-    if(y >= 1900) return `${y}-${digits.slice(4,6)}-${digits.slice(6,8)}`;
-    const rocYear = Number(digits.slice(0,3));
-    if(rocYear >= 80 && rocYear < 200) return `${rocYear+1911}-${digits.slice(3,5)}-${digits.slice(5,7)}`;
-  }
-  let m = s.match(/^(\d{2,3})[\/-](\d{1,2})[\/-](\d{1,2})$/);
-  if(m){
-    let y = Number(m[1]);
-    if(y < 1911) y += 1911;
-    return `${y}-${String(m[2]).padStart(2,"0")}-${String(m[3]).padStart(2,"0")}`;
-  }
-  m = s.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/);
-  if(m){
-    return `${m[1]}-${String(m[2]).padStart(2,"0")}-${String(m[3]).padStart(2,"0")}`;
-  }
-  return "";
-}
-function toRocDateString(iso){
-  const m = String(iso || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if(!m) return "";
-  return `${Number(m[1])-1911}/${m[2]}/${m[3]}`;
-}
-function normalizeDateForSort(value){
-  const iso = normalizeApiDate(value);
-  if(!iso) return 0;
-  const t = new Date(`${iso}T00:00:00`).getTime();
-  return Number.isFinite(t) ? t : 0;
-}
-function normalizeDisplayDate(value){
-  const iso = normalizeApiDate(value);
-  if(!iso) return String(value || "");
-  return iso.replace(/-/g,"/");
-}
+  tpexHistoryByDate: {},
+  tpexHistoryLoadedDates: new Set(),
+  tpexHistoryValidDates: [],
+  tpexHistoryLoadPromise: null
+};
 
-/* =========================================================
-   ETF
-========================================================= */
-function isLikelyETF(info){
-  const code = normalizeCode(info?.code);
-  const name = String(info?.name || "");
-  const type = String(info?.type || "");
-  if(/^00\d{3,5}[A-Z]?$/.test(code)) return true;
-  if(name.includes("ETF") || name.includes("指數") || name.includes("高股息") || name.includes("主動式") || name.includes("主動")) return true;
-  if(type.toUpperCase().includes("ETF")) return true;
-  return false;
-}
-
-/* =========================================================
-   Debug
-========================================================= */
-function addDebug(stage,target,level,message){
-  debugLogs.push({time:new Date(),stage,target,level,message});
-  if(debugLogs.length>800) debugLogs.shift();
-}
-function clearDebugLogs(){
-  debugLogs.length = 0;
-  document.getElementById("radarDiagnosticsCard")?.classList.add("hidden");
-}
-function showDebugPanel(){
-  const card = document.getElementById("radarDiagnosticsCard");
-  if(!card) return;
-  card.classList.toggle("hidden");
-  renderDiagnostics();
-}
-function renderDiagnostics(){
-  const box = document.getElementById("radarDiagnostics");
-  if(!box) return;
-  if(!debugLogs.length){
-    box.innerHTML = `<div class="empty">目前沒有診斷紀錄。</div>`;
-    return;
-  }
-  box.innerHTML = `
-    <div class="debug-list">
-      ${debugLogs.slice().reverse().map(item=>{
-        const cls = item.level === "ERROR" ? "debug-error" : item.level === "WARN" ? "debug-warn" : "debug-ok";
-        return `
-          <div class="debug-row ${cls}">
-            [${formatTime(item.time)}] ${escapeHTML(item.stage)}｜${escapeHTML(item.target)}｜${escapeHTML(item.level)}｜${escapeHTML(item.message)}
-          </div>
-        `;
-      }).join("")}
-    </div>
-  `;
-}
-
-/* =========================================================
-   Fetch
-========================================================= */
-function fetchText(url,timeout=18000){
-  return new Promise((resolve,reject)=>{
-    const controller = new AbortController();
-    const timer = setTimeout(()=>controller.abort(),timeout);
-    fetch(url,{method:"GET",cache:"no-store",signal:controller.signal})
-    .then(async response=>{
-      if(!response.ok) throw new Error(`HTTP ${response.status}`);
-      const text = await response.text();
-      if(!text.trim()) throw new Error("資料來源回傳空白內容");
-      resolve(text);
-    })
-    .catch(error=>{
-      if(error?.name==="AbortError") reject(new Error("資料來源請求逾時"));
-      else reject(error);
-    })
-    .finally(()=>clearTimeout(timer));
+document.querySelectorAll(".tab").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(x => x.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById(btn.dataset.tab).classList.add("active");
   });
-}
-async function fetchJSON(url,timeout=18000){
-  const text = await fetchText(url,timeout);
-  try{ return JSON.parse(text); }catch{ throw new Error("資料來源不是 JSON"); }
+});
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function findDateInObject(data){
-  if(!data) return "";
-  const priorityKeys = ["date","Date","dataDate","DataDate","queryDate","QueryDate","lastTradingDay","LastTradingDay","data_as_of","DataAsOf"];
-  for(const key of priorityKeys){
-    if(Object.prototype.hasOwnProperty.call(data,key)){
-      const d = normalizeApiDate(data[key]);
-      if(d) return d;
-    }
+function num(v) {
+  if (v === null || v === undefined) return 0;
+  if (typeof v === "number") {
+    return Number.isFinite(v) ? v : 0;
   }
-  if(Array.isArray(data)){
-    for(const item of data.slice(0,10)){
-      if(item && typeof item === "object" && !Array.isArray(item)){
-        const d = findDateInObject(item);
-        if(d) return d;
-      }
-    }
-  }
-  if(typeof data === "object" && !Array.isArray(data)){
-    for(const key of Object.keys(data)){
-      const value = data[key];
-      if(value && typeof value === "object"){
-        const d = findDateInObject(value);
-        if(d) return d;
-      }
-    }
-  }
-  return "";
+  let s = String(v)
+    .replace(/,/g, "")
+    .replace(/--/g, "")
+    .replace(/—/g, "")
+    .replace(/　/g, "")
+    .trim();
+  if (s === "" || s === "-" || s === "null" || s === "undefined") return 0;
+  const n = Number(s);
+  return Number.isFinite(n) ? n : 0;
 }
 
-async function mapWithConcurrency(items,worker,concurrency=3){
-  const results = new Array(items.length);
-  let nextIndex = 0;
-  async function runner(){
-    while(true){
-      const index = nextIndex++;
-      if(index >= items.length) return;
-      try{
-        results[index] = await worker(items[index],index);
-      }catch(error){
-        results[index] = {__error:error};
-      }
-    }
-  }
-  const count = Math.min(concurrency,Math.max(items.length,1));
-  await Promise.all(Array.from({length:count},runner));
-  return results;
+function pct(v) {
+  if (!Number.isFinite(v)) return "—";
+  return (v >= 0 ? "+" : "") + v.toFixed(2) + "%";
 }
 
-/* =========================================================
-   TWSE / TPEX 行情與當沖資格
-========================================================= */
-function parseTWSEQuoteRows(data){
-  const map = new Map();
-  const tables = [];
-  if(Array.isArray(data?.data)) tables.push(data.data);
-  if(Array.isArray(data?.tables)){
-    for(const table of data.tables){
-      if(Array.isArray(table?.data)) tables.push(table.data);
-    }
-  }
-  for(const table of tables){
-    for(const row of table){
-      if(!Array.isArray(row)) continue;
-      const code = normalizeCode(row[0]);
-      if(!/^[0-9]{4,6}[A-Z]?$/.test(code)) continue;
-      const name = String(row[1] || "").trim();
-      let open = toNumber(row[5]);
-      let high = toNumber(row[6]);
-      let low = toNumber(row[7]);
-      let close = toNumber(row[8]);
-      let volume = toNumber(row[2]);
-      if(!Number.isFinite(close)){
-        open = toNumber(row[3]); high = toNumber(row[4]); low = toNumber(row[5]); close = toNumber(row[6]); volume = toNumber(row[1]);
-      }
-      if(!Number.isFinite(close)) continue;
-      map.set(code,{code,name,price:close,open,high,low,volume,market:"TWSE"});
-    }
-  }
-  return map;
+function clamp(v, min, max) {
+  return Math.max(min, Math.min(max, v));
 }
 
-async function loadTWSEMarketQuotes(){
-  const cache = marketQuoteData.TWSE;
-  if(cache.map.size && marketDataCache.TWSE.time && Date.now()-marketDataCache.TWSE.time < MARKET_QUOTE_CACHE_TIME){
-    return cache;
-  }
-  try{
-    const data = await fetchJSON(TWSE_DAILY_API);
-    const date = findDateInObject(data);
-    const map = parseTWSEQuoteRows(data);
-    if(!map.size) throw new Error("TWSE 每日行情沒有有效股票資料");
-    cache.date = date; cache.map = map;
-    marketDataCache.TWSE.time = Date.now();
-    return cache;
-  }catch(error){
-    if(cache.map.size) return cache;
-    throw error;
-  }
+function avg(arr) {
+  const a = arr.filter(x => Number.isFinite(x));
+  if (!a.length) return 0;
+  return a.reduce((s, v) => s + v, 0) / a.length;
 }
 
-function parseTPEXQuoteRows(data){
-  const map = new Map();
-  const rows = Array.isArray(data) ? data : Array.isArray(data?.aaData) ? data.aaData : Array.isArray(data?.data) ? data.data : [];
-  for(const row of rows){
-    if(row && typeof row==="object" && !Array.isArray(row)){
-      const code = normalizeCode(row.SecuritiesCompanyCode || row.Code || row.code || row.SecurityCode);
-      if(!/^[0-9]{4,6}[A-Z]?$/.test(code)) continue;
-      const name = String(row.CompanyName || row.Name || row.name || "").trim();
-      const close = toNumber(row.Close ?? row.close);
-      const open = toNumber(row.Open ?? row.open);
-      const high = toNumber(row.High ?? row.high);
-      const low = toNumber(row.Low ?? row.low);
-      const volume = toNumber(row.TradingShares ?? row.Volume ?? row.volume);
-      if(!Number.isFinite(close)) continue;
-      map.set(code,{code,name,price:close,open,high,low,volume,market:"TPEX"});
-      continue;
-    }
-    if(!Array.isArray(row)) continue;
-    const code = normalizeCode(row[0]);
-    if(!/^[0-9]{4,6}[A-Z]?$/.test(code)) continue;
-    const name = String(row[1] || "").trim();
-    const close = toNumber(row[2]);
-    const open = toNumber(row[4]);
-    const high = toNumber(row[5]);
-    const low = toNumber(row[6]);
-    const volume = toNumber(row[8]);
-    if(!Number.isFinite(close)) continue;
-    map.set(code,{code,name,price:close,open,high,low,volume,market:"TPEX"});
-  }
-  return map;
+function std(arr) {
+  const a = arr.filter(x => Number.isFinite(x));
+  if (a.length < 2) return 0;
+  const m = avg(a);
+  return Math.sqrt(avg(a.map(x => Math.pow(x - m, 2))));
 }
 
-async function loadTPEXMarketQuotes(){
-  const cache = marketQuoteData.TPEX;
-  if(cache.map.size && marketDataCache.TPEX.time && Date.now()-marketDataCache.TPEX.time < MARKET_QUOTE_CACHE_TIME){
-    return cache;
+function escapeHTML(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function formatDate(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return y + m + day;
+}
+
+function today() {
+  return formatDate(new Date());
+}
+
+function dateISO(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function parseROCDate(value) {
+  if (!value) return "";
+  let s = String(value).trim().replace(/-/g, "/").replace(/\./g, "/");
+  let m = s.match(/^(\d{2,3})\/(\d{1,2})\/(\d{1,2})$/);
+  if (m) {
+    let y = Number(m[1]);
+    if (y < 1911) y += 1911;
+    return y + String(Number(m[2])).padStart(2, "0") + String(Number(m[3])).padStart(2, "0");
   }
-  try{
-    const data = await fetchJSON(TPEX_DAILY_OPENAPI);
-    const date = findDateInObject(data);
-    const map = parseTPEXQuoteRows(data);
-    if(!map.size) throw new Error("TPEx 每日行情沒有有效股票資料");
-    cache.date = date; cache.map = map;
-    marketDataCache.TPEX.time = Date.now();
-    return cache;
-  }catch(error){
-    if(cache.map.size) return cache;
-    throw error;
+  m = s.match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/);
+  if (m) {
+    return m[1] + String(Number(m[2])).padStart(2, "0") + String(Number(m[3])).padStart(2, "0");
+  }
+  if (/^\d{8}$/.test(s)) return s;
+  return s;
+}
+
+function isoToCompactDate(iso) {
+  return String(iso).replace(/-/g, "");
+}
+
+function setProgress(percent, text) {
+  const wrap = document.getElementById("radarProgressWrap");
+  const bar = document.getElementById("radarProgress");
+  const label = document.getElementById("radarProgressText");
+  wrap.style.display = "block";
+  bar.style.width = clamp(percent, 0, 100) + "%";
+  label.textContent = text || "";
+}
+
+function setStatus(id, text, type = "idle") {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = text;
+  el.className = "status-" + type;
+}
+
+function setMainStatus(text) {
+  const el = document.getElementById("dataStatus");
+  if (el) el.textContent = text;
+}
+
+function proxyURL(url) {
+  return CONFIG.PROXY + encodeURIComponent(url);
+}
+
+async function fetchWithTimeout(url) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), CONFIG.REQUEST_TIMEOUT);
+  try {
+    const res = await fetch(url, {
+      signal: controller.signal,
+      cache: "no-store"
+    });
+    return res;
+  } finally {
+    clearTimeout(timer);
   }
 }
 
-function parseTWSEDayTrade(data){
-  const result = new Map();
-  const rows = Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : [];
-  for(const row of rows){
-    if(row && typeof row==="object" && !Array.isArray(row)){
-      const code = normalizeCode(row.Code || row.code || row.SecuritiesCompanyCode);
-      if(!/^[0-9]{4,6}[A-Z]?$/.test(code)) continue;
-      const name = String(row.Name || row.name || "").trim();
-      const suspension = String(row.Suspension || row.suspension || row["暫停現股賣出後現款買進當沖註記"] || "").trim();
-      const date = normalizeApiDate(row.Date || row.date || "");
-      result.set(code,{code,name,suspension,date});
-      continue;
-    }
-    if(!Array.isArray(row)) continue;
-    const code = normalizeCode(row[0]);
-    if(!/^[0-9]{4,6}[A-Z]?$/.test(code)) continue;
-    result.set(code,{code,name:String(row[1] || "").trim(),suspension:String(row[2] || "").trim(),date:""});
+async function fetchJSON(url, allowProxy = true) {
+  try {
+    const res = await fetchWithTimeout(url);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    return await res.json();
+  } catch (e) {
+    if (!allowProxy) throw e;
   }
-  return result;
+  const res = await fetchWithTimeout(proxyURL(url));
+  if (!res.ok) throw new Error("Proxy HTTP " + res.status);
+  return await res.json();
 }
 
-async function loadTWSEDayTrade(tradingDate=""){
-  const cache = window.__twseDayTradeCache || {time:0,date:"",map:new Map()};
-  window.__twseDayTradeCache = cache;
-  if(cache.map.size && cache.time && Date.now()-cache.time < DAYTRADE_CACHE_TIME && (!tradingDate || cache.date===tradingDate)){
-    twseDayTradeSet = cache.map;
-    return cache.map;
-  }
-  try{
-    const dateParam = tradingDate ? tradingDate.replace(/-/g,"") : "";
-    const url = dateParam ? `${TWSE_DAYTRADE_OPENAPI}?date=${encodeURIComponent(dateParam)}` : TWSE_DAYTRADE_OPENAPI;
-    const data = await fetchJSON(url);
-    const parsed = parseTWSEDayTrade(data);
-    if(!parsed.size) throw new Error("TWSE 官方當沖標的資料為空");
-    const dates = [...parsed.values()].map(x=>x.date).filter(Boolean);
-    const actualDate = dates[0] || tradingDate || "";
-    cache.time = Date.now(); cache.date = actualDate; cache.map = parsed;
-    twseDayTradeSet = parsed;
-    return parsed;
-  }catch(error){
-    if(cache.map.size){ twseDayTradeSet = cache.map; return cache.map; }
-    twseDayTradeSet = new Map();
-    throw error;
-  }
-}
-
-function parseTPEXDayTrade(data){
-  const result = new Map();
-  const rows = Array.isArray(data) ? data : Array.isArray(data?.aaData) ? data.aaData : Array.isArray(data?.data) ? data.data : [];
-  for(const row of rows){
-    if(row && typeof row==="object" && !Array.isArray(row)){
-      const code = normalizeCode(row.SecuritiesCompanyCode || row.Code || row.code || row.SecurityCode);
-      if(!/^[0-9]{4,6}[A-Z]?$/.test(code)) continue;
-      const name = String(row.CompanyName || row.Name || row.name || "").trim();
-      const suspension = String(row.DayTradeMark || row.DayTrade || row.Suspension || row["暫停現股賣出後現款買進當沖註記"] || "").trim();
-      const date = normalizeApiDate(row.Date || row.date || row.DataDate || "");
-      result.set(code,{code,name,suspension,date});
-      continue;
-    }
-    if(!Array.isArray(row)) continue;
-    const code = normalizeCode(row[0]);
-    if(!/^[0-9]{4,6}[A-Z]?$/.test(code)) continue;
-    result.set(code,{code,name:String(row[1] || "").trim(),suspension:String(row[2] || "").trim(),date:""});
-  }
-  return result;
-}
-
-async function loadTPEXDayTrade(tradingDate=""){
-  const cache = window.__tpexDayTradeCache || {time:0,date:"",map:new Map()};
-  window.__tpexDayTradeCache = cache;
-  if(cache.map.size && cache.time && Date.now()-cache.time < DAYTRADE_CACHE_TIME){
-    tpexDayTradeSet = cache.map;
-    return cache.map;
-  }
-  try{
-    const data = await fetchJSON(TPEX_DAYTRADE_OPENAPI);
-    const parsed = parseTPEXDayTrade(data);
-    if(!parsed.size) throw new Error("TPEx 官方當沖標的資料為空");
-    const dates = [...parsed.values()].map(x=>x.date).filter(Boolean);
-    const actualDate = dates[0] || tradingDate || "";
-    cache.time = Date.now(); cache.date = actualDate; cache.map = parsed;
-    tpexDayTradeSet = parsed;
-    return parsed;
-  }catch(error){
-    try{
-      if(!tradingDate) throw error;
-      const roc = toRocDateString(tradingDate);
-      const params = new URLSearchParams({date:roc,response:"json"});
-      const url = `https://www.tpex.org.tw/www/zh-tw/intraday/list?${params}`;
-      const data = await fetchJSON(url);
-      const parsed = parseTPEXDayTrade(data);
-      if(!parsed.size) throw new Error("TPEx 備援當沖資料為空");
-      cache.time = Date.now(); cache.date = tradingDate; cache.map = parsed;
-      tpexDayTradeSet = parsed;
-      return parsed;
-    }catch(fallbackError){
-      if(cache.map.size){ tpexDayTradeSet = cache.map; return cache.map; }
-      tpexDayTradeSet = new Map();
-      throw fallbackError;
-    }
-  }
-}
-
-async function loadTWSEDirectory(){
-  if(twseDirectoryLoaded) return;
-  try{
-    const market = await loadTWSEMarketQuotes();
-    for(const [code,item] of market.map){
-      twseDirectory.set(code,{code,name:item.name || SECURITY_FALLBACK[code] || `證券 ${code}`,market:"TWSE"});
-    }
-    twseDirectoryLoaded = true;
-  }catch{}
-}
-
-async function loadTPEXDirectory(){
-  if(tpexDirectoryLoaded) return;
-  try{
-    const market = await loadTPEXMarketQuotes();
-    for(const [code,item] of market.map){
-      tpexDirectory.set(code,{code,name:item.name || SECURITY_FALLBACK[code] || `證券 ${code}`,market:"TPEX"});
-    }
-    tpexDirectoryLoaded = true;
-  }catch{}
-}
-
-async function resolveSecurityInfo(code){
-  code = normalizeCode(code);
-  await Promise.allSettled([loadTWSEDirectory(),loadTPEXDirectory()]);
-  if(twseDirectory.has(code)) return twseDirectory.get(code);
-  if(tpexDirectory.has(code)) return tpexDirectory.get(code);
-  if(SECURITY_FALLBACK[code]) return {code,name:SECURITY_FALLBACK[code],market:"UNKNOWN",type:""};
-  return {code,name:`證券 ${code}`,market:"UNKNOWN",type:""};
-}
-
-function getEligibility(code,market){
-  code = normalizeCode(code);
-  if(market==="TWSE"){
-    const item = twseDayTradeSet.get(code);
-    if(!item) return {verified:false,buy:false,sell:false,reason:"官方上市當沖資格未取得"};
-    const suspended = String(item.suspension || "").trim() !== "";
-    return {verified:true,buy:true,sell:!suspended,reason:suspended?"官方資料：暫停先賣後買":"官方當沖標的"};
-  }
-  if(market==="TPEX"){
-    const item = tpexDayTradeSet.get(code);
-    if(!item) return {verified:false,buy:false,sell:false,reason:"官方上櫃當沖資格未取得"};
-    const suspended = String(item.suspension || "").includes("*");
-    return {verified:true,buy:true,sell:!suspended,reason:suspended?"官方資料：暫停先賣後買":"官方當沖標的"};
-  }
-  return {verified:false,buy:false,sell:false,reason:"市場別尚未確認"};
-}
-
-async function getMarketCandidates(market){
-  const quotes = market==="TWSE" ? await loadTWSEMarketQuotes() : await loadTPEXMarketQuotes();
-  const eligibility = market==="TWSE" ? await loadTWSEDayTrade(quotes.date) : await loadTPEXDayTrade(quotes.date);
-  if(!eligibility.size) throw new Error(`${market} 官方當沖資格資料取得失敗`);
-  const candidates = [];
-  for(const [code,item] of eligibility){
-    const quote = quotes.map.get(code);
-    if(!quote) continue;
-    const info = {code, name:quote.name || item.name || SECURITY_FALLBACK[code] || `證券 ${code}`, market, price:quote.price, volume:quote.volume};
-    if(isLikelyETF(info)) continue;
-    if(!Number.isFinite(info.price) || info.price < RADAR_MIN_PRICE || info.price > RADAR_MAX_PRICE) continue;
-    candidates.push(info);
-  }
-  candidates.sort((a,b)=>(b.volume||0)-(a.volume||0));
-  return candidates;
-}
-
-/* =========================================================
-   歷史資料
-========================================================= */
-function buildTWSEHistoryURL(base,code,date){
-  const params = new URLSearchParams({response:"json",date,stockNo:code});
-  return `${base}?${params}`;
-}
-function parseTWSEData(data,code){
-  const rows = [];
-  if(!Array.isArray(data?.data)) return rows;
-  for(const row of data.data){
-    if(!Array.isArray(row) || row.length<7) continue;
-    const date = String(row[0] || "").trim();
-    const volume = toNumber(row[1]);
-    const open = toNumber(row[3]);
-    const high = toNumber(row[4]);
-    const low = toNumber(row[5]);
-    const close = toNumber(row[6]);
-    if(!date || !Number.isFinite(open) || !Number.isFinite(high) || !Number.isFinite(low) || !Number.isFinite(close)) continue;
-    rows.push({code,date,volume:Number.isFinite(volume)?volume:0,open,high,low,close,market:"TWSE"});
-  }
-  return rows;
-}
-async function fetchTWSEMonth(code,date){
-  try{
-    const data = await fetchJSON(buildTWSEHistoryURL(TWSE_HISTORY_API,code,date));
-    const rows = parseTWSEData(data,code);
-    if(rows.length) return rows;
-    throw new Error();
-  }catch{
-    const data = await fetchJSON(buildTWSEHistoryURL(TWSE_HISTORY_FALLBACK_API,code,date));
-    const rows = parseTWSEData(data,code);
-    if(rows.length) return rows;
-    throw new Error("TWSE 歷史資料取得失敗");
-  }
-}
-
-function buildTPEXHistoryURL(code,date){
-  const params = new URLSearchParams({code,date,response:"json"});
-  return `${TPEX_HISTORY_API}?${params}`;
-}
-function parseTPEXData(data,code){
-  const rawRows = Array.isArray(data?.aaData) ? data.aaData : Array.isArray(data?.data) ? data.data : [];
-  const rows = [];
-  for(const row of rawRows){
-    if(!Array.isArray(row)) continue;
-    const date = String(row[0] || "").trim();
-    let volume = toNumber(row[1]);
-    let open = toNumber(row[3]);
-    let high = toNumber(row[4]);
-    let low = toNumber(row[5]);
-    let close = toNumber(row[6]);
-    if(!Number.isFinite(close)){
-      const nums = row.map(toNumber).filter(n=>Number.isFinite(n));
-      if(nums.length>=5){
-        volume = Number.isFinite(volume)?volume:nums[0];
-        open = nums[nums.length-4]; high = nums[nums.length-3]; low = nums[nums.length-2]; close = nums[nums.length-1];
-      }
-    }
-    if(!date || !Number.isFinite(open) || !Number.isFinite(high) || !Number.isFinite(low) || !Number.isFinite(close)) continue;
-    rows.push({code,date,volume:Number.isFinite(volume)?volume:0,open,high,low,close,market:"TPEX"});
-  }
-  return rows;
-}
-async function fetchTPEXMonth(code,date){
-  try{
-    const data = await fetchJSON(buildTPEXHistoryURL(code,date));
-    const rows = parseTPEXData(data,code);
-    if(rows.length) return rows;
-    throw new Error();
-  }catch{
-    const d = new Date(`${date.slice(0,4)}-${date.slice(4,6)}-01T00:00:00`);
-    const roc = `${d.getFullYear()-1911}/${String(d.getMonth()+1).padStart(2,"0")}`;
-    const csvURL = `https://www.tpex.org.tw/web/stock/aftertrading/daily_trading_info/st43_download_UTF-8.php?l=zh-tw&d=${encodeURIComponent(roc)}&stkno=${encodeURIComponent(code)}&s=0,asc,0`;
-    const text = await fetchText(csvURL);
-    const rows = parseTPEXCSV(text,code);
-    if(rows.length) return rows;
-    throw new Error("TPEx 歷史資料取得失敗");
-  }
-}
-function parseTPEXCSV(text,code){
-  const rows = [];
-  const lines = String(text || "").split(/\r?\n/).map(v=>v.trim()).filter(Boolean);
-  for(const line of lines){
-    const parts = line.split(",").map(v => v.replace(/^"|"$/g,"").trim());
-    if(parts.length<7) continue;
-    const date = parts[0];
-    const volume = toNumber(parts[1]);
-    const open = toNumber(parts[2]);
-    const high = toNumber(parts[3]);
-    const low = toNumber(parts[4]);
-    const close = toNumber(parts[5]);
-    if(!date || !Number.isFinite(open) || !Number.isFinite(high) || !Number.isFinite(low) || !Number.isFinite(close)) continue;
-    rows.push({code,date,volume:Number.isFinite(volume)?volume*1000:0,open,high,low,close,market:"TPEX"});
-  }
-  return rows;
-}
-
-async function fetchHistoricalData(code,market,months=3,options={}){
-  code = normalizeCode(code);
-  const delay = Number.isFinite(options.requestDelay)?options.requestDelay:180;
-  const allRows = [];
-  for(let i=0; i<months; i++){
-    const date = getMonthDate(i);
-    const key = `${market}_${code}_${date}`;
-    const cached = historyCache.get(key);
-    if(cached && Date.now()-cached.time<CACHE_TIME){
-      allRows.push(...cached.rows);
-      continue;
-    }
-    let rows = [];
-    try{
-      rows = market==="TPEX" ? await fetchTPEXMonth(code,date) : await fetchTWSEMonth(code,date);
-      historyCache.set(key,{time:Date.now(),rows});
-      allRows.push(...rows);
-    }catch{}
-    if(delay>0) await sleep(delay);
-  }
-  const unique = new Map();
-  for(const row of allRows){
-    const dateKey = normalizeDateForSort(row.date);
-    if(!dateKey) continue;
-    unique.set(`${code}_${dateKey}`,row);
-  }
-  const rows = Array.from(unique.values());
-  rows.sort((a,b)=>normalizeDateForSort(a.date)-normalizeDateForSort(b.date));
-  if(!rows.length) throw new Error("查詢不到可用歷史資料");
-  return rows;
-}
-
-/* =========================================================
-   因子與分數計算
-========================================================= */
-function calculateFactors(rows){
-  if(!Array.isArray(rows) || rows.length<10) return null;
-  const closes = rows.map(r=>r.close);
-  const volumes = rows.map(r=>r.volume);
-  const latest = rows[rows.length-1];
-  const ma5 = average(closes.slice(-5));
-  const ma10 = average(closes.slice(-10));
-  const ma20 = closes.length>=20 ? average(closes.slice(-20)) : average(closes);
-  const avgPreviousVolume = average(volumes.slice(-6,-1));
-  const dailyChange = closes.length>=2 ? (latest.close / closes[closes.length-2] - 1)*100 : 0;
-  const fiveDayChange = closes.length>=6 ? (latest.close / closes[closes.length-6] - 1)*100 : 0;
-  const volumeRatio = avgPreviousVolume>0 ? latest.volume/avgPreviousVolume : 1;
-  const distanceMA20 = ma20>0 ? Math.abs(latest.close-ma20)/ma20 : 0;
-  const ranges = rows.slice(-10).map(r => r.close>0 ? (r.high-r.low)/r.close : 0);
-  const avgRange = average(ranges)||0;
-
-  let trend = latest.close>ma5 && ma5>ma10 ? 95 : latest.close>ma5 ? 75 : latest.close<ma5 && ma5<ma10 ? 10 : 40;
-  let volume = volumeRatio>=2 ? 100 : volumeRatio>=1.5 ? 90 : volumeRatio>=1.2 ? 75 : volumeRatio>=.9 ? 60 : 35;
-  let price = dailyChange>=4 ? 100 : dailyChange>=2 ? 90 : dailyChange>=1 ? 80 : dailyChange>0 ? 65 : dailyChange<=-4 ? 5 : dailyChange<=-2 ? 15 : dailyChange<=-1 ? 30 : 45;
-  let momentum = fiveDayChange>=8 ? 100 : fiveDayChange>=5 ? 90 : fiveDayChange>=2 ? 75 : fiveDayChange>0 ? 60 : fiveDayChange<=-8 ? 5 : fiveDayChange<=-5 ? 15 : fiveDayChange<=-2 ? 30 : 45;
-  let risk = distanceMA20>.12 || avgRange>.08 ? 25 : distanceMA20>.08 || avgRange>.06 ? 40 : distanceMA20>.05 || avgRange>.04 ? 60 : 80;
-
-  return {trend,volume,price,momentum,risk,dailyChange,fiveDayChange,volumeRatio,ma5,ma10,ma20,avgRange};
-}
-
-function calculateScores(factors){
-  if(!factors) return null;
-  const buy = factors.trend*.27 + factors.volume*.22 + factors.price*.16 + factors.momentum*.25 + factors.risk*.10;
-  const sell = (100-factors.trend)*.27 + factors.volume*.22 + (100-factors.price)*.16 + (100-factors.momentum)*.25 + factors.risk*.10;
-  return {buy,sell};
-}
-
-/* =========================================================
-   個股物件建構 (★ 包含跳空偵測計算)
-========================================================= */
-function buildStock(info, rows){
-  const factors = calculateFactors(rows);
-  const scores = calculateScores(factors);
-  const sortedRows = rows.slice().sort((a,b)=>normalizeDateForSort(a.date)-normalizeDateForSort(b.date));
-  const latest = sortedRows.at(-1);
-  const prev = sortedRows.length >= 2 ? sortedRows[sortedRows.length - 2] : null;
-
-  // ★ 跳空偵測計算：今日開盤價與昨日收盤價之百分比差距
-  const gapPercent = (prev && prev.close > 0 && latest && Number.isFinite(latest.open))
-    ? ((latest.open - prev.close) / prev.close) * 100
-    : 0;
-
-  const etf = isLikelyETF(info);
-  const eligibility = etf ? {verified:true,buy:false,sell:false,reason:"ETF 不進當沖追蹤"} : getEligibility(info.code, info.market);
-
+async function fetchTWSE(date) {
+  const url = `${CONFIG.TWSE_API}/exchangeReport/MI_INDEX?response=json&date=${date}&type=ALL`;
+  const json = await fetchJSON(url);
   return {
-    code:info.code,
-    name:info.name,
-    market:info.market,
-    type:info.type || "",
-    isETF:etf,
-    price:latest?.close ?? info.price ?? null,
-    latestDate:latest?.date ?? marketQuoteData[info.market]?.date ?? "",
-    gapPercent, // ★ 記錄跳空幅度
-    factors,
-    buyScore:scores?.buy ?? null,
-    sellScore:scores?.sell ?? null,
-    buyEligible:eligibility.buy,
-    sellEligible:eligibility.sell,
-    eligibilityVerified:eligibility.verified,
-    eligibilityReason:eligibility.reason,
-    dataCount:rows.length,
-    dataQuality:rows.length>=20?"良好":rows.length>=10?"基本":"不足",
-    rows
+    rows: parseTWSE(json),
+    date
   };
 }
 
-function getEligibleScore(stock){
-  if(!stock || !stock.eligibilityVerified) return -Infinity;
-  const scores = [];
-  if(stock.buyEligible && Number.isFinite(stock.buyScore)) scores.push(stock.buyScore);
-  if(stock.sellEligible && Number.isFinite(stock.sellScore)) scores.push(stock.sellScore);
-  if(!scores.length) return -Infinity;
-  return Math.max(...scores);
-}
-
-/* =========================================================
-   訊號與時段
-========================================================= */
-function getMarketSession(){
-  const now = new Date();
-  const day = now.getDay();
-  const minutes = now.getHours()*60 + now.getMinutes();
-  if(day===0 || day===6) return {type:"closed",label:"目前休市中",active:false};
-  if(minutes < 9*60) return {type:"preopen",label:"尚未開市",active:false};
-  if(minutes < 9*60+30) return {type:"preparing",label:"開盤準備中",active:false};
-  if(minutes <= 13*60+30) return {type:"open",label:"盤中",active:true};
-  return {type:"closed",label:"今日已收市",active:false};
-}
-
-function getRadarSessionNotice(){
-  const session = getMarketSession();
-  if(session.type==="preopen") return "⏳ 尚未開市｜今日雷達將於 09:30 後開始正式掃描。";
-  if(session.type==="preparing") return "⏳ 開盤準備中｜等待正式行情資料，09:30 後開始判斷當沖訊號。";
-  if(session.type==="closed") return "⏸️ 目前休市中｜最近交易日資料僅供參考，不產生當日進場訊號。";
-  return "🟢 目前盤中｜正式當沖訊號判斷中。";
-}
-
-function getDirection(stock){
-  if(!stock) return {type:"wait",label:"觀望",score:0,reason:"沒有資料"};
-  if(stock.isETF) return {type:"etf",label:"🚫 ETF",score:0,reason:"ETF 可查詢與回測，但不能加入追蹤。"};
-  const marketSession = getMarketSession();
-  if(!marketSession.active){
+function parseTWSE(json) {
+  if (!json || !Array.isArray(json.tables)) return [];
+  let table = null;
+  for (const t of json.tables) {
+    if (Array.isArray(t.fields) && t.fields.includes("證券代號") && t.fields.includes("收盤價")) {
+      table = t;
+      break;
+    }
+  }
+  if (!table) return [];
+  const fields = table.fields;
+  return (table.data || []).map(row => {
+    const o = {};
+    fields.forEach((f, i) => { o[f] = row[i]; });
     return {
-      type:"wait",
-      label:marketSession.type==="closed"?"⏸️ 休市中":"⏳ "+marketSession.label,
-      score:Number.isFinite(stock.buyScore)||Number.isFinite(stock.sellScore)?Math.max(stock.buyScore||0,stock.sellScore||0):0,
-      reason:getRadarSessionNotice()
+      market: "TWSE",
+      code: String(o["證券代號"] || "").trim(),
+      name: String(o["證券名稱"] || "").trim(),
+      open: num(o["開盤價"]),
+      high: num(o["最高價"]),
+      low: num(o["最低價"]),
+      close: num(o["收盤價"]),
+      volume: num(o["成交股數"]),
+      change: num(o["漲跌價差"])
+    };
+  }).filter(x => /^\d{4}$/.test(x.code) && x.close > 0);
+}
+
+async function fetchTWSEOpenAPI() {
+  const url = `${CONFIG.TWSE_OPENAPI}/exchangeReport/STOCK_DAY_ALL`;
+  const json = await fetchJSON(url);
+  if (!Array.isArray(json)) return [];
+  return json.map(row => ({
+    market: "TWSE",
+    code: String(row.Code || row.證券代號 || "").trim(),
+    name: String(row.Name || row.證券名稱 || "").trim(),
+    open: num(row.OpeningPrice || row.開盤價),
+    high: num(row.HighestPrice || row.最高價),
+    low: num(row.LowestPrice || row.最低價),
+    close: num(row.ClosingPrice || row.收盤價),
+    volume: num(row.TradeVolume || row.成交股數),
+    change: num(row.Change || row.漲跌價差)
+  })).filter(x => /^\d{4}$/.test(x.code) && x.close > 0);
+}
+
+function normalizeBatchJSON(text) {
+  return String(text)
+    .replace(/\bNaN\b/g, "null")
+    .replace(/\bInfinity\b/g, "null")
+    .replace(/\b-Infinity\b/g, "null");
+}
+
+function buildTPExBatchURL(iso) {
+  const y = iso.slice(0, 4);
+  const m = iso.slice(5, 7);
+  return `${CONFIG.TPEX_BATCH_RAW}/${y}/${m}/${iso}.json`;
+}
+
+async function fetchTPExBatchDate(iso) {
+  const key = "TPEX_BATCH_" + iso;
+  if (STATE.cache[key]) return STATE.cache[key];
+
+  const promise = (async () => {
+    const url = buildTPExBatchURL(iso);
+    const res = await fetchWithTimeout(url);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const text = await res.text();
+    if (!text || text.length < 20) throw new Error("批次資料內容為空");
+    const json = JSON.parse(normalizeBatchJSON(text));
+    const raw = Array.isArray(json?.data) ? json.data : [];
+
+    const rows = raw.map(row => ({
+      market: "TPEx",
+      code: String(row.stock_id || row.code || "").trim(),
+      name: String(row.stock_name || row.name || "").trim(),
+      open: num(row.open),
+      high: num(row.high),
+      low: num(row.low),
+      close: num(row.close),
+      volume: num(row.volume),
+      change: num(row.change),
+      date: row.date || iso,
+      source: "GitHub Batch"
+    })).filter(x => /^\d{4}$/.test(x.code) && x.close > 0);
+
+    return {
+      date: iso,
+      rows,
+      metadata: json.metadata || {}
+    };
+  })();
+
+  STATE.cache[key] = promise;
+
+  try {
+    return await promise;
+  } catch (e) {
+    delete STATE.cache[key];
+    throw e;
+  }
+}
+
+async function fetchLatestTPExBatch() {
+  const base = new Date();
+
+  for (let i = 0; i <= 7; i++) {
+    const d = new Date(base);
+    d.setDate(d.getDate() - i);
+    const iso = dateISO(d);
+
+    try {
+      const result = await fetchTPExBatchDate(iso);
+      if (result.rows && result.rows.length) return result;
+    } catch (e) {}
+  }
+
+  throw new Error("最近 7 個曆日皆無 TPEx 批次資料");
+}
+
+async function fetchTPExAPI() {
+  const result = await fetchLatestTPExBatch();
+  return result.rows;
+}
+
+/* ========================================================
+   TPEx 歷史資料共用引擎
+   ======================================================== */
+function rebuildTPExHistoryValidDates() {
+  STATE.tpexHistoryValidDates = Object.keys(STATE.tpexHistoryByDate)
+    .filter(iso => {
+      const map = STATE.tpexHistoryByDate[iso];
+      return map instanceof Map && map.size > 0;
+    })
+    .sort();
+}
+
+async function loadTPExHistoryDates(targetDays = 60) {
+  const requested = Number(targetDays);
+  const needed = Math.max(Number.isFinite(requested) ? requested : 60, 60);
+  const targetValidDays = needed + 5;
+
+  rebuildTPExHistoryValidDates();
+
+  if (STATE.tpexHistoryValidDates.length >= targetValidDays) return;
+
+  if (STATE.tpexHistoryLoadPromise) {
+    try {
+      await STATE.tpexHistoryLoadPromise;
+    } catch (e) {}
+
+    rebuildTPExHistoryValidDates();
+
+    if (STATE.tpexHistoryValidDates.length >= targetValidDays) return;
+  }
+
+  const loadPromise = (async () => {
+    const base = new Date();
+    const maxCalendarDays = Math.max(needed * 2 + 30, 180);
+    const dates = [];
+
+    for (let i = 0; i < maxCalendarDays; i++) {
+      const d = new Date(base);
+      d.setDate(d.getDate() - i);
+      dates.push(dateISO(d));
+    }
+
+    rebuildTPExHistoryValidDates();
+    let validCount = STATE.tpexHistoryValidDates.length;
+
+    for (
+      let start = 0;
+      start < dates.length && validCount < targetValidDays;
+      start += CONFIG.RADAR_CONCURRENCY
+    ) {
+      const batchDates = dates
+        .slice(start, start + CONFIG.RADAR_CONCURRENCY)
+        .filter(iso => !STATE.tpexHistoryLoadedDates.has(iso));
+
+      if (!batchDates.length) continue;
+
+      await Promise.all(batchDates.map(async iso => {
+        try {
+          const batch = await fetchTPExBatchDate(iso);
+          const map = new Map();
+
+          (batch.rows || []).forEach(row => {
+            if (/^\d{4}$/.test(String(row.code || ""))) {
+              map.set(String(row.code), {
+                date: isoToCompactDate(iso),
+                open: num(row.open),
+                high: num(row.high),
+                low: num(row.low),
+                close: num(row.close),
+                volume: num(row.volume)
+              });
+            }
+          });
+
+          STATE.tpexHistoryByDate[iso] = map;
+        } catch (e) {
+          STATE.tpexHistoryByDate[iso] = new Map();
+        } finally {
+          STATE.tpexHistoryLoadedDates.add(iso);
+        }
+      }));
+
+      rebuildTPExHistoryValidDates();
+      validCount = STATE.tpexHistoryValidDates.length;
+    }
+
+    rebuildTPExHistoryValidDates();
+  })();
+
+  STATE.tpexHistoryLoadPromise = loadPromise;
+
+  try {
+    await loadPromise;
+  } finally {
+    if (STATE.tpexHistoryLoadPromise === loadPromise) {
+      STATE.tpexHistoryLoadPromise = null;
+    }
+  }
+}
+
+async function fetchStockHistoryTPEx(code, days = CONFIG.STOCK_HISTORY_DAYS) {
+  const requestedDays = Number(days);
+  const needed = Math.max(
+    Number.isFinite(requestedDays) ? requestedDays : CONFIG.STOCK_HISTORY_DAYS,
+    60
+  );
+
+  await loadTPExHistoryDates(needed);
+  rebuildTPExHistoryValidDates();
+
+  const dates = STATE.tpexHistoryValidDates.slice(-needed);
+  const results = [];
+
+  for (const iso of dates) {
+    const map = STATE.tpexHistoryByDate[iso];
+
+    if (!(map instanceof Map)) continue;
+
+    const row = map.get(String(code));
+
+    if (row) {
+      results.push({
+        date: row.date,
+        open: num(row.open),
+        high: num(row.high),
+        low: num(row.low),
+        close: num(row.close),
+        volume: num(row.volume)
+      });
+    }
+  }
+
+  return results
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .slice(-days);
+}
+
+function extractCode(row) {
+  if (!row) return "";
+
+  const fields = [
+    "Code",
+    "SecuritiesCompanyCode",
+    "證券代號",
+    "股票代號",
+    "股票代碼",
+    "代號",
+    "Symbol"
+  ];
+
+  for (const f of fields) {
+    if (row[f] !== undefined && row[f] !== null) {
+      const value = String(row[f]).trim();
+      if (value) return value;
+    }
+  }
+
+  return "";
+}
+
+function parseEligibility(json) {
+  const set = new Set();
+  let rows = [];
+
+  if (Array.isArray(json)) {
+    rows = json;
+  } else if (json && Array.isArray(json.data)) {
+    rows = json.data;
+  } else if (json && Array.isArray(json.tables)) {
+    for (const t of json.tables) {
+      if (Array.isArray(t.data)) rows.push(...t.data);
+    }
+  }
+
+  for (const row of rows) {
+    let code = "";
+
+    if (Array.isArray(row)) {
+      for (const value of row) {
+        const s = String(value ?? "").trim();
+
+        if (/^\d{4}$/.test(s)) {
+          code = s;
+          break;
+        }
+      }
+    } else {
+      code = extractCode(row);
+    }
+
+    if (/^\d{4}$/.test(code)) {
+      set.add(code);
+    }
+  }
+
+  return set;
+}
+
+async function loadTWSEEligibility() {
+  const urls = [
+    `${CONFIG.TWSE_OPENAPI}/exchangeReport/TWTB4U`,
+    `${CONFIG.TWSE_API}/rwd/zh/afterTrading/TWTB4U?response=json`
+  ];
+
+  for (const url of urls) {
+    try {
+      const json = await fetchJSON(url);
+      const set = parseEligibility(json);
+
+      if (set.size) {
+        STATE.eligibilityTWSE = set;
+        STATE.eligibilityTWSELoaded = true;
+        setStatus("statusTWSEDT", `成功：${set.size} 檔`, "ok");
+        return true;
+      }
+    } catch (e) {}
+  }
+
+  STATE.eligibilityTWSELoaded = false;
+  setStatus("statusTWSEDT", "取得失敗（不阻斷雷達）", "fail");
+  return false;
+}
+
+async function loadTPExEligibility() {
+  try {
+    const json = await fetchJSON(`${CONFIG.TPEX_OPENAPI}/tpex_securities`);
+    const set = parseEligibility(json);
+
+    if (set.size) {
+      STATE.eligibilityTPEx = set;
+      STATE.eligibilityTPExLoaded = true;
+      setStatus("statusTPExDT", `成功：${set.size} 檔`, "ok");
+      return true;
+    }
+  } catch (e) {}
+
+  STATE.eligibilityTPExLoaded = false;
+  setStatus("statusTPExDT", "取得失敗（不阻斷雷達）", "fail");
+  return false;
+}
+
+async function loadMarket() {
+  const marketStart = performance.now();
+
+  setMainStatus("正在取得 TWSE / TPEx 日行情……");
+  setStatus("statusTWSE", "取得中……", "warn");
+  setStatus("statusTPEx", "取得中……", "warn");
+  setStatus("statusTWSEDT", "背景取得中……", "warn");
+  setStatus("statusTPExDT", "背景取得中……", "warn");
+
+  const eligibilityPromise = Promise.allSettled([
+    loadTWSEEligibility(),
+    loadTPExEligibility()
+  ]);
+
+  STATE.eligibilityPromise = eligibilityPromise;
+
+  const twsePromise = (async () => {
+    try {
+      const result = await fetchTWSE(today());
+
+      if (result.rows.length) return result;
+    } catch (e) {}
+
+    const d = new Date();
+
+    for (let i = 1; i <= 7; i++) {
+      d.setDate(d.getDate() - 1);
+
+      try {
+        const result = await fetchTWSE(formatDate(d));
+
+        if (result.rows.length) return result;
+      } catch (e) {}
+    }
+
+    const rows = await fetchTWSEOpenAPI();
+
+    if (rows.length) {
+      return {
+        rows,
+        date: today()
+      };
+    }
+
+    throw new Error("TWSE 沒有資料");
+  })();
+
+  const tpexPromise = (async () => {
+    const result = await fetchLatestTPExBatch();
+
+    return {
+      rows: result.rows,
+      date: result.date,
+      source: "GitHub TPEx 批次"
+    };
+  })();
+
+  const marketRequests = await Promise.allSettled([
+    twsePromise,
+    tpexPromise
+  ]);
+
+  const twseResult =
+    marketRequests[0].status === "fulfilled"
+      ? marketRequests[0].value
+      : null;
+
+  const tpexResult =
+    marketRequests[1].status === "fulfilled"
+      ? marketRequests[1].value
+      : null;
+
+  const twse = twseResult ? twseResult.rows || [] : [];
+  const tpex = tpexResult ? tpexResult.rows || [] : [];
+
+  const twseDate = twseResult ? twseResult.date || "" : "";
+  const tpexDate = tpexResult ? tpexResult.date || "" : "";
+
+  if (twse.length) {
+    STATE.twse = twse;
+    setStatus("statusTWSE", `成功：${twse.length} 檔`, "ok");
+  } else {
+    STATE.twse = [];
+    setStatus("statusTWSE", "取得失敗", "fail");
+  }
+
+  if (tpex.length) {
+    STATE.tpex = tpex;
+    setStatus(
+      "statusTPEx",
+      `成功：${tpex.length} 檔｜${tpexDate}`,
+      "ok"
+    );
+  } else {
+    STATE.tpex = [];
+    setStatus("statusTPEx", "取得失敗", "fail");
+  }
+
+  STATE.market = [
+    ...STATE.twse,
+    ...STATE.tpex
+  ];
+
+  STATE.dataDate = twseDate || tpexDate || today();
+
+  document.getElementById("dataDate").textContent =
+    `行情日期：${STATE.dataDate}`;
+
+  try {
+    await Promise.race([
+      eligibilityPromise,
+      sleep(2500)
+    ]);
+  } catch (e) {}
+
+  const elapsed =
+    ((performance.now() - marketStart) / 1000).toFixed(1);
+
+  setMainStatus(
+    `行情：TWSE ${STATE.twse.length} 檔 / TPEx ${STATE.tpex.length} 檔｜取得 ${elapsed}s`
+  );
+
+  return STATE.market;
+}
+
+function isETF(stock) {
+  const code = String(stock.code || "").trim();
+  const name = String(stock.name || "");
+
+  if (/^00/.test(code)) return true;
+
+  const patterns = [
+    /ETF/i,
+    /指數型/,
+    /債券ETF/i,
+    /主動式ETF/i,
+    /槓桿/,
+    /反向/,
+    /期貨ETF/i,
+    /ETN/i
+  ];
+
+  return patterns.some(p => p.test(name));
+}
+
+function radarEligible(stock) {
+  if (isETF(stock)) return false;
+
+  if (stock.market === "TWSE") {
+    if (STATE.eligibilityTWSELoaded) {
+      return STATE.eligibilityTWSE.has(stock.code);
+    }
+
+    return true;
+  }
+
+  if (stock.market === "TPEx") {
+    if (STATE.eligibilityTPExLoaded) {
+      return STATE.eligibilityTPEx.has(stock.code);
+    }
+
+    return true;
+  }
+
+  return false;
+}
+
+/* ========================================================
+   TWSE 歷史資料
+   ======================================================== */
+async function fetchStockHistoryTWSE(
+  code,
+  days = CONFIG.STOCK_HISTORY_DAYS
+) {
+  const results = [];
+  const monthsNeeded = Math.ceil(days / 20) + 1;
+  const d = new Date();
+
+  for (let i = 0; i < monthsNeeded; i++) {
+    const y = d.getFullYear();
+    const m = d.getMonth() + 1;
+
+    const url =
+      `${CONFIG.TWSE_API}/exchangeReport/STOCK_DAY?response=json&date=${y}${String(m).padStart(2, "0")}01&stockNo=${code}`;
+
+    try {
+      const json = await fetchJSON(url);
+
+      if (
+        Array.isArray(json.data) &&
+        Array.isArray(json.fields)
+      ) {
+        for (const row of json.data) {
+          const o = {};
+
+          json.fields.forEach((f, j) => {
+            o[f] = row[j];
+          });
+
+          const close = num(o["收盤價"]);
+
+          if (close <= 0) continue;
+
+          results.push({
+            date: parseROCDate(o["日期"]),
+            open: num(o["開盤價"]),
+            high: num(o["最高價"]),
+            low: num(o["最低價"]),
+            close,
+            volume: num(o["成交股數"])
+          });
+        }
+      }
+    } catch (e) {}
+
+    d.setMonth(d.getMonth() - 1);
+  }
+
+  const map = new Map();
+
+  results.forEach(x => {
+    if (x.date) map.set(x.date, x);
+  });
+
+  return Array.from(map.values())
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .slice(-days);
+}
+
+async function fetchStockHistory(
+  code,
+  market = "AUTO",
+  days = CONFIG.STOCK_HISTORY_DAYS
+) {
+  const key = `HISTORY_${market}_${code}_${days}`;
+
+  if (STATE.cache[key]) {
+    return STATE.cache[key];
+  }
+
+  let result = [];
+
+  if (market === "TWSE") {
+    result = await fetchStockHistoryTWSE(code, days);
+
+  } else if (market === "TPEx") {
+    result = await fetchStockHistoryTPEx(code, days);
+
+  } else {
+    try {
+      result = await fetchStockHistoryTWSE(code, days);
+    } catch (e) {
+      result = [];
+    }
+
+    if (result.length < 20) {
+      try {
+        result = await fetchStockHistoryTPEx(code, days);
+      } catch (e) {
+        result = [];
+      }
+    }
+  }
+
+  STATE.cache[key] = result;
+
+  return result;
+}
+
+function findCurrentStock(code) {
+  return STATE.market.find(s => s.code === code) || null;
+}
+
+function calculateFeatures(history) {
+  if (!history || history.length < 20) {
+    return null;
+  }
+
+  const closes = history.map(x => x.close);
+  const volumes = history.map(x => x.volume);
+
+  const latest = history[history.length - 1];
+  const prev = history[history.length - 2];
+
+  const c = latest.close;
+  const p = prev.close;
+
+  const ret1 = p
+    ? (c / p - 1) * 100
+    : 0;
+
+  const ret5 =
+    closes.length >= 6
+      ? (c / closes[closes.length - 6] - 1) * 100
+      : 0;
+
+  const ret10 =
+    closes.length >= 11
+      ? (c / closes[closes.length - 11] - 1) * 100
+      : 0;
+
+  const ret20 =
+    closes.length >= 21
+      ? (c / closes[closes.length - 21] - 1) * 100
+      : 0;
+
+  const ma5 = avg(closes.slice(-5));
+  const ma10 = avg(closes.slice(-10));
+  const ma20 = avg(closes.slice(-20));
+  const ma60 = avg(closes.slice(-60));
+
+  const vol5 = avg(volumes.slice(-5));
+  const vol20 = avg(volumes.slice(-20));
+
+  const volumeRatio =
+    vol20 > 0
+      ? vol5 / vol20
+      : 1;
+
+  const previous20 =
+    closes.slice(-21, -1);
+
+  const high20 =
+    previous20.length
+      ? Math.max(...previous20)
+      : c;
+
+  const low20 =
+    previous20.length
+      ? Math.min(...previous20)
+      : c;
+
+  const position20 =
+    high20 !== low20
+      ? (c - low20) / (high20 - low20)
+      : .5;
+
+  const returns20 =
+    closes.slice(-21).map((x, i, arr) => {
+      if (i === 0) return NaN;
+      return (x / arr[i - 1] - 1) * 100;
+    });
+
+  const volatility = std(returns20);
+
+  const candleRange =
+    latest.high > 0
+      ? ((latest.high - latest.low) / latest.high) * 100
+      : 0;
+
+  const closeLocation =
+    latest.high !== latest.low
+      ? (latest.close - latest.low) /
+        (latest.high - latest.low)
+      : .5;
+
+  return {
+    latest,
+    ret1,
+    ret5,
+    ret10,
+    ret20,
+    ma5,
+    ma10,
+    ma20,
+    ma60,
+    volumeRatio,
+    high20,
+    low20,
+    position20,
+    volatility,
+    candleRange,
+    closeLocation
+  };
+}
+
+function scoreFactors(f) {
+  let long = 50;
+  let short = 50;
+
+  const factors = [];
+
+  function add(name, value, weight) {
+    long += value * weight;
+    short -= value * weight;
+
+    factors.push({
+      name,
+      score: clamp(
+        Math.round(50 + value * weight),
+        0,
+        100
+      )
+    });
+  }
+
+  let trend = 0;
+
+  if (f.ma5 > f.ma10) trend += .7;
+  else trend -= .7;
+
+  if (f.ma10 > f.ma20) trend += .8;
+  else trend -= .8;
+
+  if (f.ma20 > f.ma60) trend += .6;
+  else trend -= .6;
+
+  add(
+    "均線趨勢",
+    clamp(trend / 2.1, -1, 1),
+    12
+  );
+
+  let momentum = 0;
+
+  momentum += clamp(f.ret5 / 8, -1, 1);
+  momentum += clamp(f.ret10 / 12, -1, 1);
+  momentum /= 2;
+
+  add(
+    "短線動能",
+    momentum,
+    11
+  );
+
+  let volume = 0;
+
+  if (f.volumeRatio > 1.5) {
+    volume = f.ret1 >= 0 ? .9 : -.9;
+  } else if (f.volumeRatio > 1.15) {
+    volume = f.ret5 >= 0 ? .55 : -.55;
+  }
+
+  add(
+    "成交量",
+    volume,
+    9
+  );
+
+  let position = 0;
+
+  if (f.position20 >= .8) {
+    position = f.ret5 >= 0 ? .7 : -.4;
+  } else if (f.position20 <= .2) {
+    position = f.ret5 <= 0 ? -.7 : .4;
+  } else {
+    position = f.position20 - .5;
+  }
+
+  add(
+    "20日位置",
+    clamp(position, -1, 1),
+    9
+  );
+
+  let candle = 0;
+
+  if (f.closeLocation > .75) candle += .5;
+  if (f.closeLocation < .25) candle -= .5;
+  if (f.ret1 > 2) candle += .25;
+  if (f.ret1 < -2) candle -= .25;
+
+  add(
+    "收盤型態",
+    clamp(candle, -1, 1),
+    7
+  );
+
+  add(
+    "波動環境",
+    0,
+    4
+  );
+
+  long = clamp(long, 0, 100);
+  short = clamp(short, 0, 100);
+
+  const gap = Math.abs(long - short);
+  const score = Math.max(long, short);
+
+  let direction = "neutral";
+
+  if (
+    long >= CONFIG.SIGNAL_THRESHOLD &&
+    gap >= CONFIG.SIGNAL_GAP
+  ) {
+    direction = "long";
+  } else if (
+    short >= CONFIG.SIGNAL_THRESHOLD &&
+    gap >= CONFIG.SIGNAL_GAP
+  ) {
+    direction = "short";
+  }
+
+  return {
+    long,
+    short,
+    gap,
+    score,
+    direction,
+    factors
+  };
+}
+
+/* ========================================================
+   v1.0.6 新增：
+   訊號行動分類＋價格觀察區
+   ======================================================== */
+
+function roundPrice(v) {
+  if (!Number.isFinite(v) || v <= 0) return 0;
+
+  if (v >= 1000) {
+    return Math.round(v);
+  }
+
+  if (v >= 100) {
+    return Math.round(v * 10) / 10;
+  }
+
+  return Math.round(v * 100) / 100;
+}
+
+function priceRangeText(low, high) {
+  if (!low || !high) return "—";
+
+  const a = roundPrice(Math.min(low, high));
+  const b = roundPrice(Math.max(low, high));
+
+  return `${a.toFixed(a >= 100 ? 1 : 2)}～${b.toFixed(b >= 100 ? 1 : 2)}`;
+}
+
+function getActionGuidance(features, score) {
+  const c = num(features.latest?.close);
+  const ma5 = num(features.ma5);
+  const ma10 = num(features.ma10);
+  const ma20 = num(features.ma20);
+  const position = num(features.position20);
+  const ret1 = num(features.ret1);
+  const ret5 = num(features.ret5);
+
+  const upperExtension =
+    c > 0 && ma5 > 0
+      ? (c / ma5 - 1) * 100
+      : 0;
+
+  const lowerExtension =
+    c > 0 && ma5 > 0
+      ? (c / ma5 - 1) * 100
+      : 0;
+
+  let type = "waiting";
+  let title = "⚪ 等待";
+  let desc = "目前多空證據不足，先等待新的價格與量能訊號。";
+  let css = "neutral";
+
+  let zoneLow = 0;
+  let zoneHigh = 0;
+
+  /*
+   * 觀察區的核心不是預測某一個精確成交價，
+   * 而是使用 5／10 日均線與目前價格形成「價格觀察帶」。
+   */
+  if (score.direction === "long") {
+    const tooExtended =
+      position >= .88 ||
+      ret1 >= 4 ||
+      upperExtension >= 3.5;
+
+    if (tooExtended) {
+      type = "avoid_long";
+      title = "🟡 勿追多";
+      desc =
+        "目前多方條件仍存在，但價格已接近近期高位或短線延伸較大。先避免因追高造成進場位置過差。";
+
+      zoneLow = Math.min(ma5, ma10);
+      zoneHigh = Math.max(ma5, ma10);
+
+    } else {
+      type = "observe_long";
+      title = "🟢 可觀察做多";
+      desc =
+        "目前多方條件達到系統門檻，價格結構尚未被判定為過度延伸，可列入下一交易日觀察。";
+
+      zoneLow = Math.min(ma5, ma10);
+      zoneHigh = Math.max(ma5, c);
+    }
+
+  } else if (score.direction === "short") {
+    const tooExtended =
+      position <= .12 ||
+      ret1 <= -4 ||
+      lowerExtension <= -3.5;
+
+    if (tooExtended) {
+      type = "avoid_short";
+      title = "🟡 勿追空";
+      desc =
+        "目前空方條件仍存在，但價格已接近近期低位或短線跌幅較大。先避免因追空造成進場位置過差。";
+
+      zoneLow = Math.min(ma5, ma10);
+      zoneHigh = Math.max(ma5, ma10);
+
+    } else {
+      type = "observe_short";
+      title = "🔴 可觀察做空";
+      desc =
+        "目前空方條件達到系統門檻，價格結構尚未被判定為過度延伸，可列入下一交易日觀察。";
+
+      zoneLow = Math.min(ma5, c);
+      zoneHigh = Math.max(ma5, ma10);
+    }
+
+  } else {
+    const longNear =
+      score.long >= CONFIG.SIGNAL_THRESHOLD - 8 &&
+      score.long > score.short;
+
+    const shortNear =
+      score.short >= CONFIG.SIGNAL_THRESHOLD - 8 &&
+      score.short > score.long;
+
+    if (longNear) {
+      type = "wait_pullback";
+      title = "🟡 等回踩";
+      desc =
+        "多方條件正在接近門檻，但目前尚未形成完整方向訊號。可觀察價格回踩均線後是否重新轉強。";
+
+      zoneLow = Math.min(ma5, ma10);
+      zoneHigh = Math.max(ma5, c);
+
+    } else if (shortNear) {
+      type = "wait_weakness";
+      title = "🟡 等轉弱";
+      desc =
+        "空方條件正在接近門檻，但目前尚未形成完整方向訊號。可觀察反彈至均線附近後是否出現轉弱。";
+
+      zoneLow = Math.min(ma5, c);
+      zoneHigh = Math.max(ma5, ma10);
+
+    } else {
+      type = "waiting";
+      title = "⚪ 等待";
+      desc =
+        "目前多空證據不足，沒有強迫選擇方向。等待新的價格、均線或量能變化。";
+
+      zoneLow = Math.min(ma10, ma20);
+      zoneHigh = Math.max(ma10, ma20);
+    }
+  }
+
+  /*
+   * 若計算結果異常，至少不要顯示倒序或 0～0 的假觀察區。
+   */
+  if (
+    !Number.isFinite(zoneLow) ||
+    !Number.isFinite(zoneHigh) ||
+    zoneLow <= 0 ||
+    zoneHigh <= 0
+  ) {
+    zoneLow = 0;
+    zoneHigh = 0;
+  }
+
+  return {
+    type,
+    title,
+    desc,
+    css,
+    zoneLow,
+    zoneHigh,
+    zoneText: priceRangeText(zoneLow, zoneHigh)
+  };
+}
+
+function directionText(d) {
+  if (d === "long") return "🟢 偏多";
+  if (d === "short") return "🔴 偏空";
+  return "⚪ 不做";
+}
+
+function directionClass(d) {
+  if (d === "long") return "long";
+  if (d === "short") return "short";
+  return "neutral";
+}
+
+function actionBadgeClass(type) {
+  if (type === "observe_long") return "long";
+  if (type === "observe_short") return "short";
+  if (
+    type === "avoid_long" ||
+    type === "avoid_short" ||
+    type === "wait_pullback" ||
+    type === "wait_weakness"
+  ) {
+    return "warn";
+  }
+
+  return "neutral";
+}
+
+async function analyzeOne(
+  stock,
+  historyDays = CONFIG.STOCK_HISTORY_DAYS
+) {
+  let history = [];
+
+  if (stock.market === "TWSE") {
+    history = await fetchStockHistory(
+      stock.code,
+      "TWSE",
+      historyDays
+    );
+
+    if (history.length < 20) {
+      history = await fetchStockHistory(
+        stock.code,
+        "TPEx",
+        historyDays
+      );
+    }
+
+  } else if (stock.market === "TPEx") {
+    history = await fetchStockHistory(
+      stock.code,
+      "TPEx",
+      historyDays
+    );
+
+    if (history.length < 20) {
+      history = await fetchStockHistory(
+        stock.code,
+        "TWSE",
+        historyDays
+      );
+    }
+
+  } else {
+    try {
+      history = await fetchStockHistory(
+        stock.code,
+        "TWSE",
+        historyDays
+      );
+    } catch (e) {
+      history = [];
+    }
+
+    if (history.length < 20) {
+      try {
+        history = await fetchStockHistory(
+          stock.code,
+          "TPEx",
+          historyDays
+        );
+      } catch (e) {
+        history = [];
+      }
+    }
+  }
+
+  if (history.length < 20) {
+    return {
+      ...stock,
+      history,
+      valid: false
     };
   }
-  if(!stock.factors || !Number.isFinite(stock.buyScore) || !Number.isFinite(stock.sellScore)){
-    return {type:"wait",label:"觀望",score:0,reason:"資料不足"};
-  }
-  const buyOK = stock.buyEligible && stock.eligibilityVerified && stock.buyScore>=SIGNAL_SCORE && stock.buyScore-stock.sellScore>=SIGNAL_GAP;
-  const sellOK = stock.sellEligible && stock.eligibilityVerified && stock.sellScore>=SIGNAL_SCORE && stock.sellScore-stock.buyScore>=SIGNAL_GAP;
-  if(buyOK) return {type:"buy",label:"🟢 沖買",score:stock.buyScore,reason:"沖買條件達標"};
-  if(sellOK) return {type:"sell",label:"🔴 沖賣",score:stock.sellScore,reason:"沖賣條件達標"};
-  return {type:"wait",label:"🟡 觀望",score:Math.max(stock.buyScore,stock.sellScore),reason:"訊號方向尚未形成"};
-}
 
-/* =========================================================
-   畫面渲染 (★ 融入極簡跳空標籤)
-========================================================= */
-function renderFactors(stock){
-  if(!stock?.factors) return `<div class="empty">因子資料不足</div>`;
-  const items = [["趨勢",stock.factors.trend],["量能",stock.factors.volume],["價格",stock.factors.price],["動能",stock.factors.momentum],["風險",stock.factors.risk]];
-  return `
-    <div class="factor-grid">
-      ${items.map(([label,value])=>`
-        <div class="factor">
-          <div class="factor-label">${label}</div>
-          <div class="factor-value">${Math.round(value)}</div>
-        </div>
-      `).join("")}
-    </div>
-  `;
-}
+  const features = calculateFeatures(history);
 
-function renderRadarItem(stock, rank){
-  const direction = getDirection(stock);
-  const eligibleScore = getEligibleScore(stock);
-  const marketText = stock.market==="TWSE" ? "上市" : "上櫃";
-
-  // ★ 判斷跳空幅度並產生極簡標籤（超過 2% 顯示）
-  let gapBadgeHTML = "";
-  if(Number.isFinite(stock.gapPercent) && Math.abs(stock.gapPercent) >= 2.0){
-    const isUp = stock.gapPercent > 0;
-    gapBadgeHTML = `<span class="gap-badge ${isUp?'gap-up':'gap-down'}">${isUp?'🔺':'🔻'}跳空${isUp?'+':''}${stock.gapPercent.toFixed(1)}%</span>`;
+  if (!features) {
+    return {
+      ...stock,
+      history,
+      valid: false
+    };
   }
 
-  return `
-    <div class="radar-item">
-      <div class="radar-rank">
-        TOP ${rank}｜${marketText}｜可當沖分數 ${Number.isFinite(eligibleScore)?Math.round(eligibleScore):"--"}
-      </div>
-      <div class="radar-top">
-        <div>
-          <div class="stock-name">${escapeHTML(stock.name)}</div>
-          <div class="stock-code">${escapeHTML(stock.code)} ｜ ${marketText}</div>
-        </div>
-        <div>
-          <div class="price">
-            ${Number.isFinite(stock.price)?formatNumber(stock.price):"--"}${gapBadgeHTML}
-          </div>
-          <div class="stock-code">${escapeHTML(normalizeDisplayDate(stock.latestDate))}</div>
-        </div>
-      </div>
-      <div class="direction ${direction.type}">
-        ${direction.label}${Number.isFinite(direction.score)?`｜${Math.round(direction.score)}`:""}
-      </div>
-      ${renderFactors(stock)}
-      <div class="score-row">
-        <div class="score-box">
-          <div class="score-title">沖買分數</div>
-          <div class="score-value">${Number.isFinite(stock.buyScore)?Math.round(stock.buyScore):"--"}</div>
-        </div>
-        <div class="score-box">
-          <div class="score-title">沖賣分數</div>
-          <div class="score-value">${Number.isFinite(stock.sellScore)?Math.round(stock.sellScore):"--"}</div>
-        </div>
-      </div>
-      <div class="small" style="margin-top:8px">${escapeHTML(direction.reason)}</div>
-      <div class="small" style="margin-top:5px">當沖資格：${stock.eligibilityVerified?"✅ 已取得":"⚠️ 未取得"}</div>
-      <button class="secondary full-button" onclick="openStockFromRadar('${escapeHTML(stock.code)}')">🔎 查看個股</button>
-    </div>
-  `;
+  const score = scoreFactors(features);
+  const action = getActionGuidance(features, score);
+  const latest = history[history.length - 1];
+
+  return {
+    ...stock,
+    market: stock.market || "UNKNOWN",
+    name: stock.name || "",
+    close: stock.close || latest.close,
+    open: stock.open || latest.open,
+    high: stock.high || latest.high,
+    low: stock.low || latest.low,
+    volume: stock.volume || latest.volume,
+    history,
+    features,
+    score,
+    action,
+    valid: true
+  };
 }
 
-function renderRadarTop10(stocks){
-  const box = document.getElementById("radarTopSection");
-  if(!box) return;
-  if(!stocks.length){
-    box.innerHTML = `
-      <div class="card">
-        <div class="market-title">
-          <div class="section-title">🏆 雷達 TOP 10</div>
-          <div class="market-badge">0 / 10</div>
-        </div>
-        <div class="empty">目前沒有取得符合條件的股票。</div>
-      </div>
-    `;
+async function mapConcurrent(
+  items,
+  concurrency,
+  worker,
+  onProgress
+) {
+  const results = new Array(items.length);
+  let nextIndex = 0;
+  let completed = 0;
+
+  async function runner() {
+    while (true) {
+      const index = nextIndex++;
+
+      if (index >= items.length) break;
+
+      try {
+        results[index] = await worker(
+          items[index],
+          index
+        );
+      } catch (e) {
+        results[index] = null;
+      }
+
+      completed++;
+
+      if (onProgress) {
+        onProgress(
+          completed,
+          items.length,
+          items[index]
+        );
+      }
+    }
+  }
+
+  const workers = [];
+  const count = Math.min(
+    concurrency,
+    items.length
+  );
+
+  for (let i = 0; i < count; i++) {
+    workers.push(runner());
+  }
+
+  await Promise.all(workers);
+
+  return results;
+}
+
+async function runRadar() {
+  const result =
+    document.getElementById("radarResult");
+
+  result.innerHTML =
+    `<div class="empty">正在取得市場資料……</div>`;
+
+  const totalStart = performance.now();
+
+  try {
+    const market = await loadMarket();
+    const dataLoadedAt = performance.now();
+
+    if (!market.length) {
+      result.innerHTML =
+        `<div class="warning">
+          目前沒有取得市場行情。<br><br>
+          請先看下方「資料狀態」。
+        </div>`;
+      return;
+    }
+
+    let candidates = market.filter(stock => {
+      return (
+        stock.close >= CONFIG.RADAR_MIN_PRICE &&
+        stock.close <= CONFIG.RADAR_MAX_PRICE &&
+        stock.volume >= CONFIG.MIN_VOLUME &&
+        radarEligible(stock)
+      );
+    });
+
+    candidates = candidates
+      .sort((a, b) => b.volume - a.volume)
+      .slice(0, CONFIG.RADAR_CANDIDATES);
+
+    if (!candidates.length) {
+      result.innerHTML =
+        `<div class="warning">
+          目前沒有符合 98～252 元與成交量門檻的官方日行情候選。
+        </div>`;
+      return;
+    }
+
+    const analysisStart = performance.now();
+    const results = [];
+
+    setProgress(
+      5,
+      `已取得市場資料，候選 ${candidates.length} 檔，開始分析……`
+    );
+
+    const hasTPExCandidate =
+      candidates.some(stock =>
+        stock.market === "TPEx"
+      );
+
+    if (hasTPExCandidate) {
+      setProgress(
+        7,
+        `候選 ${candidates.length} 檔，正在建立 TPEx 共用歷史資料……`
+      );
+
+      try {
+        await loadTPExHistoryDates(
+          CONFIG.RADAR_HISTORY_DAYS
+        );
+      } catch (e) {}
+    }
+
+    const analyzed = await mapConcurrent(
+      candidates,
+      CONFIG.RADAR_CONCURRENCY,
+      async stock =>
+        await analyzeOne(
+          stock,
+          CONFIG.RADAR_HISTORY_DAYS
+        ),
+      (completed, total, stock) => {
+        const percent =
+          5 + (completed / total) * 90;
+
+        setProgress(
+          percent,
+          `分析 ${completed}/${total}：${stock.code}`
+        );
+      }
+    );
+
+    analyzed.forEach(x => {
+      if (x && x.valid) {
+        results.push(x);
+      }
+    });
+
+    /*
+     * v1.0.6：
+     * 排序仍以原本方向／分數／Gap／成交量為主，
+     * 不用新的「行動分類」改寫原本雷達排序。
+     */
+    results.sort((a, b) => {
+      const rank = {
+        long: 2,
+        short: 2,
+        neutral: 1
+      };
+
+      const ra =
+        rank[a.score.direction] || 0;
+
+      const rb =
+        rank[b.score.direction] || 0;
+
+      if (ra !== rb) {
+        return rb - ra;
+      }
+
+      if (
+        a.score.score !==
+        b.score.score
+      ) {
+        return (
+          b.score.score -
+          a.score.score
+        );
+      }
+
+      if (
+        a.score.gap !==
+        b.score.gap
+      ) {
+        return (
+          b.score.gap -
+          a.score.gap
+        );
+      }
+
+      return b.volume - a.volume;
+    });
+
+    const top =
+      results.slice(
+        0,
+        CONFIG.RADAR_MAX_STOCKS
+      );
+
+    renderRadar(
+      top,
+      candidates.length,
+      results.length
+    );
+
+    const totalSeconds =
+      ((performance.now() - totalStart) / 1000)
+        .toFixed(1);
+
+    const dataSeconds =
+      ((dataLoadedAt - totalStart) / 1000)
+        .toFixed(1);
+
+    const analysisSeconds =
+      ((performance.now() - analysisStart) / 1000)
+        .toFixed(1);
+
+    setProgress(
+      100,
+      `完成：TOP ${top.length}｜資料 ${dataSeconds}s｜分析 ${analysisSeconds}s｜總計 ${totalSeconds}s`
+    );
+
+    setMainStatus(
+      `雷達完成：TOP ${top.length}｜候選 ${candidates.length}｜總耗時 ${totalSeconds}s`
+    );
+
+  } catch (e) {
+    result.innerHTML =
+      `<div class="warning">
+        雷達分析失敗：<br>
+        ${escapeHTML(e.message || String(e))}
+      </div>`;
+  }
+}
+
+function renderRadar(
+  results,
+  candidateCount = 0,
+  analyzedCount = 0
+) {
+  const box =
+    document.getElementById("radarResult");
+
+  if (!results.length) {
+    box.innerHTML =
+      `<div class="empty">
+        官方行情有取得，但目前沒有足夠歷史資料完成分析。
+      </div>`;
     return;
   }
+
+  let html = `
+    <div class="success">
+      本次雷達完成分析 <b>${results.length}</b> 檔。<br>
+      初步候選：<b>${candidateCount}</b> 檔。<br>
+      成功完成歷史分析：<b>${analyzedCount}</b> 檔。<br>
+      雷達價格範圍：
+      <b>${CONFIG.RADAR_MIN_PRICE}～${CONFIG.RADAR_MAX_PRICE}</b><br><br>
+      <b>點擊股票代號即可直接進入個股並開始歷史驗證。</b>
+    </div>
+
+    <div style="height:10px"></div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>股票</th>
+            <th>市場</th>
+            <th>系統方向</th>
+            <th>行動判讀</th>
+            <th>多方</th>
+            <th>空方</th>
+            <th>收盤</th>
+            <th>觀察區</th>
+            <th>1日</th>
+            <th>5日</th>
+            <th>量能</th>
+            <th>差距</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+
+  results.forEach((x, i) => {
+    const f = x.features;
+    const s = x.score;
+    const action = x.action ||
+      getActionGuidance(f, s);
+
+    html += `
+      <tr
+        class="stock-row"
+        onclick="showRadarStock('${escapeHTML(x.code)}')"
+      >
+        <td>${i + 1}</td>
+
+        <td>
+          <span class="stock-code-link">
+            ${escapeHTML(x.code)}
+          </span><br>
+          <span class="small">
+            ${escapeHTML(x.name || "")}
+          </span>
+        </td>
+
+        <td>
+          <span class="badge blue">
+            ${escapeHTML(x.market)}
+          </span>
+        </td>
+
+        <td>
+          <span class="badge ${directionClass(s.direction)}">
+            ${directionText(s.direction)}
+          </span>
+        </td>
+
+        <td>
+          <span class="badge ${actionBadgeClass(action.type)}">
+            ${escapeHTML(action.title)}
+          </span>
+        </td>
+
+        <td>${Math.round(s.long)}</td>
+        <td>${Math.round(s.short)}</td>
+
+        <td>${Number(x.close).toFixed(2)}</td>
+
+        <td>${escapeHTML(action.zoneText)}</td>
+
+        <td>${pct(f.ret1)}</td>
+        <td>${pct(f.ret5)}</td>
+        <td>${f.volumeRatio.toFixed(2)}x</td>
+        <td>${Math.round(s.gap)}</td>
+      </tr>
+    `;
+  });
+
+  html += `
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  box.innerHTML = html;
+}
+
+async function analyzeStock(autoBacktest = false) {
+  const code =
+    document.getElementById("stockCode")
+      .value
+      .trim();
+
+  const box =
+    document.getElementById("stockResult");
+
+  if (!/^\d{4}$/.test(code)) {
+    box.innerHTML =
+      `<div class="card">
+        <div class="warning">
+          請輸入 4 碼股票代號。
+        </div>
+      </div>`;
+    return;
+  }
+
+  box.innerHTML =
+    `<div class="card">
+      <div class="empty">
+        正在尋找 ${escapeHTML(code)} 的資料……
+      </div>
+    </div>`;
+
+  try {
+    let stock = findCurrentStock(code);
+
+    if (stock) {
+      const data =
+        await analyzeOne(
+          stock,
+          CONFIG.STOCK_HISTORY_DAYS
+        );
+
+      if (data.valid) {
+        renderStock(data, autoBacktest);
+
+        if (autoBacktest) {
+          await runBacktest(
+            true,
+            code
+          );
+        }
+
+        return;
+      }
+    }
+
+    const data =
+      await analyzeOne({
+        code,
+        name: "",
+        market: "AUTO",
+        close: 0,
+        volume: 0
+      }, CONFIG.STOCK_HISTORY_DAYS);
+
+    if (!data.valid) {
+      box.innerHTML =
+        `<div class="card">
+          <div class="warning">
+            無法取得 <b>${escapeHTML(code)}</b>
+            足夠的歷史資料。<br><br>
+            個股查詢本身沒有 98～252 元限制。
+          </div>
+        </div>`;
+      return;
+    }
+
+    renderStock(data, autoBacktest);
+
+    if (autoBacktest) {
+      await runBacktest(
+        true,
+        code
+      );
+    }
+
+  } catch (e) {
+    box.innerHTML =
+      `<div class="card">
+        <div class="warning">
+          個股分析失敗：<br>
+          ${escapeHTML(e.message || String(e))}
+        </div>
+      </div>`;
+  }
+}
+
+function showRadarStock(code) {
+  document
+    .querySelector('[data-tab="stock"]')
+    .click();
+
+  document.getElementById("stockCode").value =
+    code;
+
+  analyzeStock(true);
+}
+
+function quickStock(code) {
+  document.getElementById("stockCode").value =
+    code;
+
+  analyzeStock();
+}
+
+function renderStock(
+  data,
+  autoBacktest = false
+) {
+  const f = data.features;
+  const s = data.score;
+  const action =
+    data.action ||
+    getActionGuidance(f, s);
+
+  const box =
+    document.getElementById("stockResult");
+
+  let dtText = "無法確認";
+  let dtClass = "warn";
+
+  if (
+    data.market === "TWSE" &&
+    STATE.eligibilityTWSELoaded
+  ) {
+    if (
+      STATE.eligibilityTWSE.has(data.code)
+    ) {
+      dtText = "可當沖";
+      dtClass = "long";
+    } else {
+      dtText = "非目前當沖清單";
+      dtClass = "neutral";
+    }
+  }
+
+  if (
+    data.market === "TPEx" &&
+    STATE.eligibilityTPExLoaded
+  ) {
+    if (
+      STATE.eligibilityTPEx.has(data.code)
+    ) {
+      dtText = "可當沖";
+      dtClass = "long";
+    } else {
+      dtText = "非目前當沖清單";
+      dtClass = "neutral";
+    }
+  }
+
+  let radarRangeText =
+    "不屬於雷達 98～252 範圍";
+
+  let radarRangeClass = "warn";
+
+  if (
+    data.close >= CONFIG.RADAR_MIN_PRICE &&
+    data.close <= CONFIG.RADAR_MAX_PRICE
+  ) {
+    radarRangeText =
+      "位於雷達 98～252 範圍";
+
+    radarRangeClass = "long";
+  }
+
+  let factorsHTML = "";
+
+  s.factors.forEach(x => {
+    factorsHTML += `
+      <div class="factor">
+        <div class="factor-name">
+          ${escapeHTML(x.name)}
+        </div>
+
+        <div class="bar">
+          <span style="width:${x.score}%"></span>
+        </div>
+
+        <div class="factor-score">
+          ${x.score}
+        </div>
+      </div>
+    `;
+  });
+
   box.innerHTML = `
     <div class="card">
-      <div class="market-title">
-        <div class="section-title">🏆 雷達 TOP 10</div>
-        <div class="market-badge">${stocks.length} / ${RADAR_MAX_STOCKS}</div>
+      <div class="section-title">
+        <h2>
+          ${escapeHTML(data.code)}
+          ${escapeHTML(data.name || "")}
+        </h2>
+
+        <span class="badge blue">
+          ${escapeHTML(data.market)}
+        </span>
       </div>
-      <div class="small" style="margin-bottom:10px">
-        上市＋上櫃合併排序｜價格 ${RADAR_MIN_PRICE}～${RADAR_MAX_PRICE}｜ETF 排除
+
+      <div class="signal ${directionClass(s.direction)}">
+        <div class="big">
+          ${directionText(s.direction)}
+        </div>
+
+        <div class="score">
+          多方 ${Math.round(s.long)}
+          ／空方 ${Math.round(s.short)}
+          ／差距 ${Math.round(s.gap)}
+        </div>
       </div>
-      ${stocks.map((stock,index)=>renderRadarItem(stock,index+1)).join("")}
+
+      <div class="action-box ${action.css}">
+        <div class="action-title">
+          ${escapeHTML(action.title)}
+        </div>
+
+        <div class="action-desc">
+          ${escapeHTML(action.desc)}
+        </div>
+
+        <div class="price-zone">
+          <b>📍 建議價格觀察區：</b>
+          ${escapeHTML(action.zoneText)}
+        </div>
+      </div>
     </div>
-  `;
-}
 
-async function scanMarket(market){
-  const candidates = await getMarketCandidates(market);
-  if(!candidates.length) return [];
-  const status = document.getElementById("radarStatus");
-  let finished=0;
-  const results = await mapWithConcurrency(candidates, async info=>{
-    try{
-      const stock = await loadStock(info.code, market, RADAR_HISTORY_MONTHS, {requestDelay:0, knownInfo:info});
-      finished++;
-      if(status) status.textContent = `正在分析 ${market==="TWSE"?"上市":"上櫃"}｜${finished}/${candidates.length}｜${info.code}`;
-      if(!stock.factors || !Number.isFinite(stock.price)) return null;
-      if(stock.price<RADAR_MIN_PRICE || stock.price>RADAR_MAX_PRICE) return null;
-      if(!stock.eligibilityVerified) return null;
-      return stock;
-    }catch{
-      finished++;
-      return null;
-    }
-  }, RADAR_CONCURRENCY);
-  return results.filter(x => x && Number.isFinite(getEligibleScore(x)));
-}
-
-async function loadStock(code, market=null, months=3, options={}){
-  code = normalizeCode(code);
-  if(!isValidStockCode(code)) throw new Error("證券代號格式不正確");
-  let info = options.knownInfo ? {...options.knownInfo, code} : await resolveSecurityInfo(code);
-  if(!market || market==="UNKNOWN") market = info.market;
-  
-  if(market==="UNKNOWN"){
-    try{
-      const twse = await loadTWSEMarketQuotes();
-      if(twse.map.has(code)){ market="TWSE"; info={...info, ...twse.map.get(code), market}; }
-    }catch{}
-  }
-  if(market==="UNKNOWN"){
-    try{
-      const tpex = await loadTPEXMarketQuotes();
-      if(tpex.map.has(code)){ market="TPEX"; info={...info, ...tpex.map.get(code), market}; }
-    }catch{}
-  }
-  const rows = await fetchHistoricalData(code, market, months, options);
-  return buildStock({...info, market}, rows);
-}
-
-async function loadRadarData(){
-  if(radarLoading) return;
-  radarLoading=true;
-  const status = document.getElementById("radarStatus");
-  const session = getMarketSession();
-  if(status){ status.className="status info"; status.textContent="正在取得上市＋上櫃官方市場資料……"; }
-  clearDebugLogs();
-  try{
-    const [twse,tpex] = await Promise.allSettled([scanMarket("TWSE"), scanMarket("TPEX")]);
-    const twseStocks = twse.status==="fulfilled" ? twse.value : [];
-    const tpexStocks = tpex.status==="fulfilled" ? tpex.value : [];
-    marketStocks=[...twseStocks,...tpexStocks];
-    marketStocks.sort((a,b)=>getEligibleScore(b)-getEligibleScore(a));
-    marketStocks=marketStocks.slice(0,RADAR_MAX_STOCKS);
-    renderRadarTop10(marketStocks);
-    
-    if(status){
-      if(!session.active){ status.className="status warning"; status.textContent=getRadarSessionNotice(); }
-      else{ status.className="status success"; status.textContent=`雷達完成｜上市＋上櫃合併 TOP ${marketStocks.length}`; }
-    }
-    const info=document.getElementById("radarRefreshInfo");
-    if(info){
-      info.innerHTML=`${getRadarSessionNotice()}<br>最後檢查：${formatTime(new Date())}｜每 60 秒重新檢查`;
-    }
-  }catch(error){
-    if(status){ status.className="status error"; status.textContent=`雷達更新失敗：${error?.message||"未知錯誤"}`; }
-    renderRadarTop10([]);
-  }finally{
-    radarLoading=false;
-  }
-}
-
-async function searchStock(){
-  if(stockSearchLoading) return;
-  const input = document.getElementById("stockCodeInput");
-  const message = document.getElementById("stockMessage");
-  const detail = document.getElementById("stockDetail");
-  const code = normalizeCode(input?.value);
-  if(!isValidStockCode(code)){
-    message.innerHTML = `<div class="status error">請輸入正確的證券代號。</div>`;
-    detail.innerHTML="";
-    return;
-  }
-  stockSearchLoading=true;
-  message.innerHTML = `<div class="status info">正在查詢 ${escapeHTML(code)}……</div>`;
-  detail.innerHTML = `<div class="card loading">正在取得資料……</div>`;
-  try{
-    const stock = await loadStock(code, null, 3, {requestDelay:180});
-    selectedStock = stock;
-    message.innerHTML="";
-    renderStockDetail(stock);
-  }catch(error){
-    message.innerHTML = `<div class="status error">查詢失敗：${escapeHTML(error?.message||"未知錯誤")}</div>`;
-    detail.innerHTML="";
-  }finally{
-    stockSearchLoading=false;
-  }
-}
-
-async function openStockFromRadar(code){
-  switchTab("stock");
-  const input = document.getElementById("stockCodeInput");
-  if(input) input.value = normalizeCode(code);
-  await searchStock();
-}
-
-function goToBacktest(code){
-  const input = document.getElementById("backtestCode");
-  if(input) input.value = normalizeCode(code);
-  switchTab("backtest");
-  document.getElementById("backtestResult").innerHTML="";
-}
-
-function renderStockDetail(stock){
-  const detail = document.getElementById("stockDetail");
-  if(!detail) return;
-  const direction = getDirection(stock);
-  let actionHTML="";
-  if(stock.isETF){
-    actionHTML = `<div class="status warning">ETF 可以查詢與回測，但不能加入追蹤。</div>`;
-  }else if(!stock.eligibilityVerified){
-    actionHTML = `<div class="status warning">${escapeHTML(stock.eligibilityReason||"官方當沖資格尚未取得")}</div>`;
-  }else{
-    const canTrack = (direction.type==="buy"||direction.type==="sell") && trackingStocks.length<MAX_TRACKING && !trackingStocks.some(x=>x.code===stock.code);
-    actionHTML = `<button class="success-btn full-button" ${canTrack?"":"disabled"} onclick="startTracking('${escapeHTML(stock.code)}')">${canTrack?"🎯 加入追蹤":"目前無法加入追蹤"}</button>`;
-  }
-  
-  // 個股畫面同步加入跳空提示
-  let gapDetailText = "";
-  if(Number.isFinite(stock.gapPercent)){
-    gapDetailText = `<br>今日跳空幅度：<strong style="color:${stock.gapPercent>=0?'#166534':'#b32222'}">${stock.gapPercent>=0?'+':''}${stock.gapPercent.toFixed(2)}%</strong>`;
-  }
-
-  detail.innerHTML = `
     <div class="card">
-      <div class="detail-title">${escapeHTML(stock.name)}</div>
-      <div class="detail-subtitle">${escapeHTML(stock.code)} ｜ ${stock.market==="TWSE"?"上市":"上櫃"}</div>
-      <div class="metric-grid">
+      <h2>🏷️ 股票資料</h2>
+
+      <div class="info-grid">
         <div class="metric">
-          <div class="metric-label">最新價格</div>
-          <div class="metric-value">${Number.isFinite(stock.price)?formatNumber(stock.price):"--"}</div>
+          <div class="label">市場</div>
+          <div class="value">
+            ${escapeHTML(data.market)}
+          </div>
         </div>
+
         <div class="metric">
-          <div class="metric-label">最新交易日</div>
-          <div class="metric-value">${escapeHTML(normalizeDisplayDate(stock.latestDate))}</div>
+          <div class="label">當沖資格</div>
+          <div class="value">
+            <span class="badge ${dtClass}">
+              ${dtText}
+            </span>
+          </div>
         </div>
+
         <div class="metric">
-          <div class="metric-label">沖買分數</div>
-          <div class="metric-value">${Number.isFinite(stock.buyScore)?Math.round(stock.buyScore):"--"}</div>
+          <div class="label">雷達價格範圍</div>
+          <div class="value">
+            <span class="badge ${radarRangeClass}">
+              ${radarRangeText}
+            </span>
+          </div>
         </div>
+
         <div class="metric">
-          <div class="metric-label">沖賣分數</div>
-          <div class="metric-value">${Number.isFinite(stock.sellScore)?Math.round(stock.sellScore):"--"}</div>
+          <div class="label">成交股數</div>
+          <div class="value">
+            ${Number(data.volume || 0).toLocaleString()}
+          </div>
         </div>
-      </div>
-      <div class="direction ${direction.type}">${direction.label}${Number.isFinite(direction.score)?`｜${Math.round(direction.score)}`:""}</div>
-      ${renderFactors(stock)}
-      <div class="status info" style="margin-top:10px">
-        資料筆數：${stock.dataCount} ｜ 品質：${escapeHTML(stock.dataQuality)}${gapDetailText}
-        <br>當沖資格：${stock.eligibilityVerified?"✅ 已取得":"⚠️ 未取得"}
-      </div>
-      <button class="secondary" style="width:100%;margin-bottom:8px" onclick="goToBacktest('${escapeHTML(stock.code)}')">📊 一鍵回測</button>
-      ${actionHTML}
-    </div>
-  `;
-}
 
-function startTracking(code){
-  code = normalizeCode(code);
-  const stock = selectedStock?.code===code ? selectedStock : marketStocks.find(x=>x.code===code);
-  if(!stock) return;
-  if(stock.isETF || !stock.eligibilityVerified || trackingStocks.length>=MAX_TRACKING || trackingStocks.some(x=>x.code===code)) return;
-  const direction = getDirection(stock);
-  if(direction.type!=="buy" && direction.type!=="sell") return;
-  trackingStocks.push({...stock, direction:direction.type, lots:0, firstEntry:null, secondEntry:null, entered:false, lastTrackingUpdate:new Date()});
-  switchTab("tracking");
-  renderTracking();
-}
-
-function enterFirstLot(code){
-  const item = trackingStocks.find(x=>x.code===code);
-  if(!item || item.lots>=1 || !Number.isFinite(item.price)) return;
-  item.lots=1; item.entered=true; item.firstEntry={price:item.price, time:new Date()};
-  renderTracking();
-}
-
-function enterSecondLot(code){
-  const item = trackingStocks.find(x=>x.code===code);
-  if(!item || !item.entered || item.lots>=MAX_LOTS) return;
-  item.lots=2; item.secondEntry={price:item.price, time:new Date()};
-  renderTracking();
-}
-
-function exitPosition(code){
-  const index = trackingStocks.findIndex(x=>x.code===code);
-  if(index<0) return;
-  const item = trackingStocks[index];
-  if(item.entered){
-    completedTrades.push({code:item.code, name:item.name, direction:item.direction, lots:item.lots, firstEntry:item.firstEntry, secondEntry:item.secondEntry, exitPrice:item.price, exitTime:new Date()});
-  }
-  trackingStocks.splice(index,1);
-  renderTracking();
-}
-
-function renderTracking(){
-  const list = document.getElementById("trackingList");
-  const status = document.getElementById("trackingStatus");
-  if(!list || !status) return;
-  if(!trackingStocks.length){
-    status.className="status info"; status.textContent="目前沒有追蹤中的股票。";
-    list.innerHTML=`<div class="card"><div class="empty">尚未加入追蹤。</div></div>`;
-  }else{
-    status.className="status success"; status.textContent=`目前追蹤 ${trackingStocks.length} / ${MAX_TRACKING} 檔。`;
-    list.innerHTML=trackingStocks.map(renderTrackingCard).join("");
-  }
-  renderCompletedTrades();
-}
-
-function renderTrackingCard(item){
-  const direction = getDirection(item);
-  const entered = item.entered===true;
-  return `
-    <div class="tracking-card ${entered?"tracking-locked":""}">
-      <div class="tracking-header">
-        <div>
-          <div class="stock-name">${escapeHTML(item.name)}</div>
-          <div class="stock-code">${escapeHTML(item.code)} ｜ ${item.market==="TWSE"?"上市":"上櫃"}</div>
+        <div class="metric">
+          <div class="label">歷史資料筆數</div>
+          <div class="value">
+            ${data.history.length}
+          </div>
         </div>
-        ${entered?`<div class="lock-badge">🔒 已進場</div>`:""}
-      </div>
-      <div class="direction ${direction.type}">${direction.label}</div>
-      <div class="metric-grid">
-        <div class="metric"><div class="metric-label">目前價格</div><div class="metric-value">${Number.isFinite(item.price)?formatNumber(item.price):"--"}</div></div>
-        <div class="metric"><div class="metric-label">持有張數</div><div class="metric-value">${item.lots} / ${MAX_LOTS}</div></div>
-      </div>
-      ${item.firstEntry?`<div class="lot-box"><div class="small">第 1 張進場</div><div class="entry-price">${formatNumber(item.firstEntry.price)}</div></div>`:""}
-      <div class="tracking-buttons">
-        ${!entered?`
-          <button class="success-btn" onclick="enterFirstLot('${escapeHTML(item.code)}')">🟢 第 1 張進場</button>
-          <button class="secondary" onclick="exitPosition('${escapeHTML(item.code)}')">離開追蹤</button>
-        `:`
-          <button class="secondary" ${item.lots>=MAX_LOTS?"disabled":""} onclick="enterSecondLot('${escapeHTML(item.code)}')">➕ 第 2 張</button>
-          <button class="danger" onclick="exitPosition('${escapeHTML(item.code)}')">🔴 出場</button>
-        `}
+
+        <div class="metric">
+          <div class="label">最新資料日</div>
+          <div class="value">
+            ${escapeHTML(
+              data.history[
+                data.history.length - 1
+              ]?.date || "—"
+            )}
+          </div>
+        </div>
       </div>
     </div>
-  `;
-}
 
-function renderCompletedTrades(){
-  const box = document.getElementById("completedTrades");
-  if(!box) return;
-  if(!completedTrades.length){ box.innerHTML=`<div class="small">今天尚無完成出場紀錄。</div>`; return; }
-  box.innerHTML=completedTrades.slice().reverse().map(trade=>`
-    <div class="trade-record">
-      <strong>${escapeHTML(trade.name)}</strong> (${escapeHTML(trade.code)})｜${trade.direction==="buy"?"沖買":"沖賣"}｜${trade.lots}張｜出場：${formatNumber(trade.exitPrice)}
+    <div class="card">
+      <h2>📊 系統判斷依據</h2>
+      ${factorsHTML}
     </div>
-  `).join("");
-}
 
-async function refreshTrackingData(){
-  if(trackingRefreshing || !trackingStocks.length) return;
-  trackingRefreshing=true;
-  try{
-    for(const item of [...trackingStocks]){
-      try{
-        const refreshed = await loadStock(item.code, item.market, 3, {requestDelay:0});
-        const index = trackingStocks.findIndex(x=>x.code===item.code);
-        if(index>=0){
-          trackingStocks[index] = {...refreshed, direction:trackingStocks[index].direction, lots:trackingStocks[index].lots, firstEntry:trackingStocks[index].firstEntry, secondEntry:trackingStocks[index].secondEntry, entered:trackingStocks[index].entered, lastTrackingUpdate:new Date()};
+    <div class="card">
+      <h2>📈 趨勢資料</h2>
+
+      <div class="info-grid">
+        <div class="metric">
+          <div class="label">5日均線</div>
+          <div class="value">${f.ma5.toFixed(2)}</div>
+        </div>
+
+        <div class="metric">
+          <div class="label">10日均線</div>
+          <div class="value">${f.ma10.toFixed(2)}</div>
+        </div>
+
+        <div class="metric">
+          <div class="label">20日均線</div>
+          <div class="value">${f.ma20.toFixed(2)}</div>
+        </div>
+
+        <div class="metric">
+          <div class="label">60日均線</div>
+          <div class="value">${f.ma60.toFixed(2)}</div>
+        </div>
+
+        <div class="metric">
+          <div class="label">5日報酬</div>
+          <div class="value">${pct(f.ret5)}</div>
+        </div>
+
+        <div class="metric">
+          <div class="label">10日報酬</div>
+          <div class="value">${pct(f.ret10)}</div>
+        </div>
+
+        <div class="metric">
+          <div class="label">20日報酬</div>
+          <div class="value">${pct(f.ret20)}</div>
+        </div>
+
+        <div class="metric">
+          <div class="label">近期量能</div>
+          <div class="value">${f.volumeRatio.toFixed(2)}x</div>
+        </div>
+
+        <div class="metric">
+          <div class="label">20日位置</div>
+          <div class="value">
+            ${(f.position20 * 100).toFixed(1)}%
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="label">20日波動</div>
+          <div class="value">
+            ${f.volatility.toFixed(2)}%
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🧭 v1.0.6 行動判讀</h2>
+
+      <div class="action-box ${action.css}">
+        <div class="action-title">
+          ${escapeHTML(action.title)}
+        </div>
+
+        <div class="action-desc">
+          ${escapeHTML(action.desc)}
+        </div>
+
+        <div class="price-zone">
+          <b>📍 建議價格觀察區：</b>
+          ${escapeHTML(action.zoneText)}
+        </div>
+      </div>
+
+      <div style="height:8px"></div>
+
+      <div class="small">
+        觀察區由目前收盤、5日均線、10日均線與20日位置計算。
+        它是「觀察價格帶」，不是保證支撐、壓力或成交價格。
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📊 這檔股票歷史驗證</h2>
+
+      <div class="notice">
+        已自動帶入 <b>${escapeHTML(data.code)}</b>。
+        ${
+          autoBacktest
+            ? `<br><br><b>
+                本次由雷達點擊進入，
+                系統會直接開始歷史驗證。
+              </b>`
+            : `<br><br>
+              你可以直接點擊下方按鈕開始驗證。`
         }
-      }catch{}
-    }
-    renderTracking();
-  }finally{
-    trackingRefreshing=false;
+      </div>
+
+      <div style="height:10px"></div>
+
+      <button
+        class="btn"
+        style="width:100%"
+        onclick="prepareBacktest('${escapeHTML(data.code)}')"
+      >
+        📊 使用 ${escapeHTML(data.code)} 開始驗證
+      </button>
+    </div>
+
+    <div class="card">
+      <h2>⚠️ 系統解讀</h2>
+      <div class="warning">
+        ${getInterpretation(data)}
+      </div>
+    </div>
+  `;
+}
+
+function getInterpretation(data) {
+  const s = data.score;
+  const action =
+    data.action ||
+    getActionGuidance(
+      data.features,
+      s
+    );
+
+  if (s.direction === "long") {
+    return `
+      目前歷史條件整體偏向多方。<br><br>
+      系統目前進一步判讀為：
+      <b>${escapeHTML(action.title)}</b>。<br><br>
+      這不代表下一交易日一定上漲，
+      系統只是把目前可取得的歷史條件整理成第二份依據。
+    `;
   }
+
+  if (s.direction === "short") {
+    return `
+      目前歷史條件整體偏向空方。<br><br>
+      系統目前進一步判讀為：
+      <b>${escapeHTML(action.title)}</b>。<br><br>
+      這不代表下一交易日一定下跌，
+      系統只是把目前可取得的歷史條件整理成第二份依據。
+    `;
+  }
+
+  return `
+    目前多空證據不足。<br><br>
+    系統目前進一步判讀為：
+    <b>${escapeHTML(action.title)}</b>。<br><br>
+    「不做」代表目前模型沒有足夠的方向差距。
+  `;
 }
 
-function startAutoRefresh(){
-  setInterval(()=>{ if(!radarLoading) loadRadarData(); }, 60000);
-  setInterval(()=>{ refreshTrackingData(); }, 10000);
+function prepareBacktest(code) {
+  document.getElementById("backtestCode").value =
+    code;
+
+  document
+    .getElementById("backtestCode")
+    .scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
 }
 
-/* =========================================================
-   回測
-========================================================= */
-function calculateHistoricalSignal(rows, index){
-  if(!Array.isArray(rows) || index<19) return null;
-  const current = rows.slice(0, index+1);
-  const factors = calculateFactors(current);
-  const scores = calculateScores(factors);
-  if(!factors || !scores) return null;
-  const buySignal = scores.buy>=SIGNAL_SCORE && scores.buy-scores.sell>=SIGNAL_GAP;
-  const sellSignal = scores.sell>=SIGNAL_SCORE && scores.sell-scores.buy>=SIGNAL_GAP;
-  if(!buySignal && !sellSignal) return null;
-  return {direction:buySignal?"buy":"sell", score:buySignal?scores.buy:scores.sell, entryClose:rows[index].close};
-}
+async function runBacktest(
+  silent = false,
+  forcedCode = ""
+) {
+  const code =
+    forcedCode ||
+    document
+      .getElementById("backtestCode")
+      .value
+      .trim();
 
-async function runBacktest(){
-  if(backtestLoading) return;
-  const code = normalizeCode(document.getElementById("backtestCode")?.value);
-  const months = Number(document.getElementById("backtestMonths")?.value || 3);
-  const result = document.getElementById("backtestResult");
-  if(!isValidStockCode(code)){
-    result.innerHTML=`<div class="card"><div class="status error">請輸入正確的證券代號。</div></div>`;
+  const days =
+    Number(
+      document.getElementById("backtestDays").value
+    );
+
+  const box =
+    document.getElementById("backtestResult");
+
+  if (!/^\d{4}$/.test(code)) {
+    if (!silent) {
+      box.innerHTML =
+        `<div class="card">
+          <div class="warning">
+            請輸入 4 碼股票代號。
+          </div>
+        </div>`;
+    }
+
     return;
   }
-  backtestLoading=true;
-  result.innerHTML=`<div class="card loading">正在讀取歷史資料……</div>`;
-  try{
-    const stock = await loadStock(code, null, months, {requestDelay:180});
-    const rows = stock.rows;
-    if(!rows || rows.length<20) throw new Error("歷史資料不足 20 個交易日。");
-    let signalCount=0, favorableCount=0, adverseCount=0;
-    const favorableMoves=[], adverseMoves=[], volatilities=[];
-    for(let i=19; i<rows.length-1; i++){
-      const signal = calculateHistoricalSignal(rows, i);
-      if(!signal) continue;
-      signalCount++;
-      const next = rows[i+1], entry = signal.entryClose;
-      let favorable=0, adverse=0;
-      if(signal.direction==="buy"){
-        favorable = (next.high/entry-1)*100;
-        adverse = (next.low/entry-1)*100;
-      }else{
-        favorable = (entry/next.low-1)*100;
-        adverse = (entry/next.high-1)*100;
-      }
-      if(favorable>0){ favorableCount++; favorableMoves.push(favorable); }
-      if(adverse<0){ adverseCount++; adverseMoves.push(Math.abs(adverse)); }
-      const range = next.close>0 ? ((next.high-next.low)/next.close)*100 : 0;
-      if(Number.isFinite(range)) volatilities.push(range);
+
+  document.getElementById("backtestCode").value =
+    code;
+
+  box.innerHTML =
+    `<div class="card">
+      <div class="empty">
+        📊 正在直接驗證 ${escapeHTML(code)} ……<br><br>
+        正在建立「訊號日 → 下一交易日」的歷史資料。
+      </div>
+    </div>`;
+
+  if (silent) {
+    setTimeout(() => {
+      box.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }, 50);
+  }
+
+  try {
+    const current =
+      findCurrentStock(code);
+
+    const market =
+      current?.market || "AUTO";
+
+    const history =
+      await fetchStockHistory(
+        code,
+        market,
+        Math.max(
+          CONFIG.BACKTEST_HISTORY_DAYS,
+          days + 80
+        )
+      );
+
+    if (history.length < 40) {
+      box.innerHTML =
+        `<div class="card">
+          <div class="warning">
+            ${escapeHTML(code)}
+            歷史資料不足，無法進行方向驗證。
+          </div>
+        </div>`;
+      return;
     }
-    const favorableRate = signalCount ? favorableCount/signalCount*100 : 0;
-    const adverseRate = signalCount ? adverseCount/signalCount*100 : 0;
-    result.innerHTML=`
+
+    const start =
+      Math.max(
+        20,
+        history.length - days - 1
+      );
+
+    let longTotal = 0;
+    let longCorrect = 0;
+    let longReturnSum = 0;
+
+    let shortTotal = 0;
+    let shortCorrect = 0;
+    let shortReturnSum = 0;
+
+    let neutralTotal = 0;
+
+    const rows = [];
+
+    for (
+      let i = start;
+      i < history.length - 1;
+      i++
+    ) {
+      const slice =
+        history.slice(0, i + 1);
+
+      const f =
+        calculateFeatures(slice);
+
+      if (!f) continue;
+
+      const s =
+        scoreFactors(f);
+
+      const next =
+        history[i + 1];
+
+      const entry =
+        num(next.open);
+
+      const exit =
+        num(next.close);
+
+      if (
+        entry <= 0 ||
+        exit <= 0
+      ) {
+        continue;
+      }
+
+      /*
+       * 多方：開盤 → 收盤
+       * 空方：開盤做空 → 收盤回補
+       */
+      const longReturn =
+        (exit / entry - 1) * 100;
+
+      const shortReturn =
+        (entry / exit - 1) * 100;
+
+      let actual = "neutral";
+
+      if (longReturn > 0) {
+        actual = "long";
+      } else if (longReturn < 0) {
+        actual = "short";
+      }
+
+      if (s.direction === "long") {
+        longTotal++;
+        longReturnSum += longReturn;
+
+        if (longReturn > 0) {
+          longCorrect++;
+        }
+
+      } else if (s.direction === "short") {
+        shortTotal++;
+        shortReturnSum += shortReturn;
+
+        if (shortReturn > 0) {
+          shortCorrect++;
+        }
+
+      } else {
+        neutralTotal++;
+      }
+
+      rows.push({
+        signalDate: history[i].date,
+        nextDate: next.date,
+        direction: s.direction,
+        score: s.score,
+        gap: s.gap,
+        entry,
+        exit,
+        return:
+          s.direction === "short"
+            ? shortReturn
+            : longReturn,
+        actual
+      });
+    }
+
+    const longRate =
+      longTotal
+        ? (longCorrect / longTotal) * 100
+        : 0;
+
+    const shortRate =
+      shortTotal
+        ? (shortCorrect / shortTotal) * 100
+        : 0;
+
+    const actionable =
+      longTotal + shortTotal;
+
+    const correct =
+      longCorrect + shortCorrect;
+
+    const overallRate =
+      actionable
+        ? (correct / actionable) * 100
+        : 0;
+
+    const longAvg =
+      longTotal
+        ? longReturnSum / longTotal
+        : 0;
+
+    const shortAvg =
+      shortTotal
+        ? shortReturnSum / shortTotal
+        : 0;
+
+    renderBacktest({
+      code,
+      total: rows.length,
+      longTotal,
+      longCorrect,
+      longRate,
+      longAvg,
+      shortTotal,
+      shortCorrect,
+      shortRate,
+      shortAvg,
+      neutralTotal,
+      actionable,
+      correct,
+      overallRate,
+      rows
+    });
+
+  } catch (e) {
+    box.innerHTML =
+      `<div class="card">
+        <div class="warning">
+          回測失敗：<br>
+          ${escapeHTML(e.message || String(e))}
+        </div>
+      </div>`;
+  }
+}
+
+function renderBacktest(r) {
+  const box =
+    document.getElementById("backtestResult");
+
+  let rowsHTML = "";
+
+  const displayRows =
+    r.rows.slice(-40);
+
+  displayRows.forEach(x => {
+    rowsHTML += `
+      <tr>
+        <td>${x.signalDate}</td>
+        <td>${x.nextDate}</td>
+
+        <td>
+          <span class="badge ${directionClass(x.direction)}">
+            ${directionText(x.direction)}
+          </span>
+        </td>
+
+        <td>${Math.round(x.score)}</td>
+        <td>${Math.round(x.gap)}</td>
+        <td>${x.entry.toFixed(2)}</td>
+        <td>${x.exit.toFixed(2)}</td>
+        <td>${pct(x.return)}</td>
+
+        <td>
+          ${
+            x.direction === "neutral"
+              ? "—"
+              : (
+                x.direction === x.actual
+                  ? "✓"
+                  : "✕"
+              )
+          }
+        </td>
+      </tr>
+    `;
+  });
+
+  box.innerHTML = `
+    <div class="card">
+      <h2>📊 ${escapeHTML(r.code)} 歷史驗證</h2>
+
+      <div class="info-grid">
+        <div class="metric">
+          <div class="label">有效樣本</div>
+          <div class="value">${r.total}</div>
+        </div>
+
+        <div class="metric">
+          <div class="label">可行動訊號</div>
+          <div class="value">${r.actionable}</div>
+        </div>
+
+        <div class="metric">
+          <div class="label">整體方向命中</div>
+          <div class="value">
+            ${r.overallRate.toFixed(1)}%
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="label">不做</div>
+          <div class="value">
+            ${r.neutralTotal}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🟢 偏多驗證</h2>
+
+      <div class="info-grid">
+        <div class="metric">
+          <div class="label">判斷次數</div>
+          <div class="value">${r.longTotal}</div>
+        </div>
+
+        <div class="metric">
+          <div class="label">方向一致</div>
+          <div class="value">${r.longCorrect}</div>
+        </div>
+
+        <div class="metric">
+          <div class="label">方向命中率</div>
+          <div class="value">
+            ${r.longRate.toFixed(1)}%
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="label">平均隔日開收方向</div>
+          <div class="value">
+            ${pct(r.longAvg)}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🔴 偏空驗證</h2>
+
+      <div class="info-grid">
+        <div class="metric">
+          <div class="label">判斷次數</div>
+          <div class="value">${r.shortTotal}</div>
+        </div>
+
+        <div class="metric">
+          <div class="label">方向一致</div>
+          <div class="value">${r.shortCorrect}</div>
+        </div>
+
+        <div class="metric">
+          <div class="label">方向命中率</div>
+          <div class="value">
+            ${r.shortRate.toFixed(1)}%
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="label">平均隔日開收方向</div>
+          <div class="value">
+            ${pct(r.shortAvg)}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>⚪ 不做</h2>
+
+      <div class="metric">
+        <div class="label">系統選擇不做</div>
+        <div class="value">
+          ${r.neutralTotal}
+        </div>
+      </div>
+
+      <div style="height:8px"></div>
+
+      <div class="notice">
+        「不做」不是失敗，代表模型當下沒有達到明確多空門檻。
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📋 實際訊號日期</h2>
+
+      <div class="small">
+        以下列出最近的歷史訊號。<br>
+        「訊號日」是系統產生判斷的日期；
+        「下一交易日」是實際驗證日期。
+      </div>
+
+      <div style="height:8px"></div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>訊號日</th>
+              <th>下一交易日</th>
+              <th>系統方向</th>
+              <th>分數</th>
+              <th>Gap</th>
+              <th>進場</th>
+              <th>出場</th>
+              <th>方向報酬</th>
+              <th>結果</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            ${rowsHTML}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>⚠️ 回測限制</h2>
+
+      <div class="warning">
+        這是歷史方向驗證，不是實際交易損益回測。<br>
+        假設：下一交易日開盤進場、收盤出場，
+        未納入相關手續費、證交稅及滑價。<br>
+        歷史結果不能直接視為未來結果。
+      </div>
+    </div>
+  `;
+}
+
+function loadTracking() {
+  try {
+    const raw =
+      localStorage.getItem(
+        "daytradeRadarTracking"
+      );
+
+    if (raw) {
+      const arr = JSON.parse(raw);
+
+      if (Array.isArray(arr)) {
+        STATE.tracking =
+          arr.slice(0, 2);
+      }
+    }
+  } catch (e) {
+    STATE.tracking = [];
+  }
+
+  renderTracking();
+}
+
+function saveTracking() {
+  try {
+    localStorage.setItem(
+      "daytradeRadarTracking",
+      JSON.stringify(
+        STATE.tracking
+      )
+    );
+  } catch (e) {}
+}
+
+function addTracking() {
+  const input =
+    document.getElementById(
+      "trackingCode"
+    );
+
+  const code =
+    input.value.trim();
+
+  if (!/^\d{4}$/.test(code)) {
+    alert("請輸入 4 碼股票代號");
+    return;
+  }
+
+  if (
+    STATE.tracking.some(
+      x => x === code
+    )
+  ) {
+    alert("這檔股票已經在追蹤中");
+    return;
+  }
+
+  if (
+    STATE.tracking.length >= 2
+  ) {
+    alert("最多追蹤 2 檔股票");
+    return;
+  }
+
+  STATE.tracking.push(code);
+
+  saveTracking();
+
+  input.value = "";
+
+  renderTracking();
+}
+
+function removeTracking(code) {
+  STATE.tracking =
+    STATE.tracking.filter(
+      x => x !== code
+    );
+
+  saveTracking();
+
+  renderTracking();
+}
+
+async function analyzeTracking(code) {
+  document
+    .querySelector('[data-tab="stock"]')
+    .click();
+
+  document.getElementById("stockCode").value =
+    code;
+
+  await analyzeStock();
+}
+
+function renderTracking() {
+  const box =
+    document.getElementById(
+      "trackingResult"
+    );
+
+  if (!STATE.tracking.length) {
+    box.innerHTML =
+      `<div class="card">
+        <div class="empty">
+          目前沒有追蹤股票。<br><br>
+          最多可以追蹤 2 檔。
+        </div>
+      </div>`;
+
+    return;
+  }
+
+  let html = "";
+
+  STATE.tracking.forEach(code => {
+    html += `
       <div class="card">
-        <div class="section-title">📊 ${escapeHTML(stock.name)} (${escapeHTML(stock.code)})</div>
-        <div class="status info">市場：${stock.market==="TWSE"?"上市":"上櫃"} ｜ 約 ${months} 個月 ｜ ${rows.length} 交易日</div>
-        <div class="result-grid">
-          <div class="result-box"><div class="result-label">訊號數</div><div class="result-value">${signalCount}</div></div>
-          <div class="result-box"><div class="result-label">有利走勢出現率</div><div class="result-value">${formatPercent(favorableRate)}</div></div>
-          <div class="result-box"><div class="result-label">平均有利幅度</div><div class="result-value">${formatPercent(average(favorableMoves)||0)}</div></div>
-          <div class="result-box"><div class="result-label">平均不利幅度</div><div class="result-value">${formatPercent(average(adverseMoves)||0)}</div></div>
+        <h2>⭐ ${escapeHTML(code)}</h2>
+
+        <div id="track-${escapeHTML(code)}">
+          <div class="empty">
+            按「分析」取得最新資料
+          </div>
+        </div>
+
+        <div style="height:8px"></div>
+
+        <div class="controls">
+          <button
+            class="btn"
+            onclick="analyzeTracking('${escapeHTML(code)}')"
+          >
+            🔎 詳細分析
+          </button>
+
+          <button
+            class="btn secondary"
+            onclick="removeTracking('${escapeHTML(code)}')"
+          >
+            移除
+          </button>
         </div>
       </div>
     `;
-  }catch(error){
-    result.innerHTML=`<div class="card"><div class="status error">回測失敗：${escapeHTML(error?.message||"未知錯誤")}</div></div>`;
-  }finally{
-    backtestLoading=false;
+  });
+
+  html += `
+    <div class="card">
+      <button
+        class="btn"
+        style="width:100%"
+        onclick="loadTrackingData()"
+      >
+        🔄 更新追蹤日行情
+      </button>
+    </div>
+  `;
+
+  box.innerHTML = html;
+}
+
+async function loadTrackingData() {
+  if (!STATE.tracking.length) return;
+
+  if (!STATE.market.length) {
+    try {
+      await loadMarket();
+    } catch (e) {}
   }
+
+  await Promise.all(
+    STATE.tracking.map(
+      async code => {
+        const target =
+          document.getElementById(
+            "track-" + code
+          );
+
+        if (!target) return;
+
+        target.innerHTML =
+          `<div class="empty">
+            正在更新 ${escapeHTML(code)}……
+          </div>`;
+
+        try {
+          const current =
+            findCurrentStock(code);
+
+          const data =
+            await analyzeOne(
+              current || {
+                code,
+                name: "",
+                market: "AUTO",
+                close: 0,
+                volume: 0
+              },
+              CONFIG.STOCK_HISTORY_DAYS
+            );
+
+          if (!data.valid) {
+            target.innerHTML =
+              `<div class="warning">
+                目前無法取得足夠資料。
+              </div>`;
+
+            return;
+          }
+
+          const s = data.score;
+
+          const action =
+            data.action ||
+            getActionGuidance(
+              data.features,
+              s
+            );
+
+          target.innerHTML = `
+            <div class="signal ${directionClass(s.direction)}">
+              <div class="big">
+                ${directionText(s.direction)}
+              </div>
+
+              <div class="score">
+                收盤 ${Number(data.close).toFixed(2)}
+                ／多 ${Math.round(s.long)}
+                ／空 ${Math.round(s.short)}
+              </div>
+
+              <div class="sub">
+                ${escapeHTML(action.title)}
+              </div>
+            </div>
+
+            <div class="price-zone">
+              <b>📍 觀察區：</b>
+              ${escapeHTML(action.zoneText)}
+            </div>
+
+            <div style="height:6px"></div>
+
+            <div class="grid">
+              <div class="metric">
+                <div class="label">1日</div>
+                <div class="value">
+                  ${pct(data.features.ret1)}
+                </div>
+              </div>
+
+              <div class="metric">
+                <div class="label">5日</div>
+                <div class="value">
+                  ${pct(data.features.ret5)}
+                </div>
+              </div>
+            </div>
+
+            <div style="height:6px"></div>
+
+            <div class="small">
+              ${escapeHTML(data.market)}
+              ／資料日期：
+              ${escapeHTML(
+                data.history[
+                  data.history.length - 1
+                ].date
+              )}
+            </div>
+          `;
+
+        } catch (e) {
+          target.innerHTML =
+            `<div class="warning">
+              更新失敗。
+            </div>`;
+        }
+      }
+    )
+  );
 }
 
-function switchTab(tab){
-  const tabs={ radar:document.getElementById("radarTab"), stock:document.getElementById("stockTab"), tracking:document.getElementById("trackingTab"), backtest:document.getElementById("backtestTab") };
-  Object.values(tabs).forEach(x=>x?.classList.add("hidden"));
-  tabs[tab]?.classList.remove("hidden");
-  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
-  const idx = {radar:0, stock:1, tracking:2, backtest:3}[tab];
-  const buttons = document.querySelectorAll(".tab");
-  if(Number.isInteger(idx) && buttons[idx]) buttons[idx].classList.add("active");
-  if(tab==="tracking") renderTracking();
-}
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+    loadTracking();
 
-document.addEventListener("DOMContentLoaded", ()=>{
-  renderTracking();
-  renderCompletedTrades();
-  setTimeout(loadRadarData, 800);
-  startAutoRefresh();
-});
+    console.log(
+      `📡 隔日當沖雷達 v${APP_VERSION} ready`
+    );
+  }
+);
 </script>
+
 </body>
 </html>
